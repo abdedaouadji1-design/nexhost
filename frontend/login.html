@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexHost V4 — تسجيل الدخول</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/shared.css">
+<style>
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  /* animated grid */
+  body::before {
+    animation: gridMove 20s linear infinite;
+  }
+
+  @keyframes gridMove {
+    0%   { background-position: 0 0; }
+    100% { background-position: 44px 44px; }
+  }
+
+  /* glow orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    animation: orbFloat 8s ease-in-out infinite;
+  }
+
+  .orb1 {
+    width: 400px; height: 400px;
+    background: rgba(0,216,255,0.07);
+    top: -100px; right: -100px;
+    animation-delay: 0s;
+  }
+
+  .orb2 {
+    width: 350px; height: 350px;
+    background: rgba(124,58,237,0.08);
+    bottom: -80px; left: -80px;
+    animation-delay: 4s;
+  }
+
+  @keyframes orbFloat {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(20px, 20px); }
+  }
+
+  /* CARD */
+  .card {
+    width: 420px;
+    max-width: 90vw;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px;
+    position: relative;
+    z-index: 10;
+    animation: cardIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    box-shadow:
+      0 0 0 1px rgba(0,216,255,0.05),
+      0 40px 80px rgba(0,0,0,0.5),
+      0 0 60px rgba(0,216,255,0.05);
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(30px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* top accent line */
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 20%; right: 20%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    border-radius: 2px;
+  }
+
+  /* LOGO */
+  .logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 32px;
+    gap: 10px;
+  }
+
+  .logo-icon {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    box-shadow: 0 0 30px rgba(0,216,255,0.35), 0 0 60px rgba(0,216,255,0.1);
+    animation: iconGlow 3s ease-in-out infinite;
+  }
+
+  @keyframes iconGlow {
+    0%, 100% { box-shadow: 0 0 30px rgba(0,216,255,0.35), 0 0 60px rgba(0,216,255,0.1); }
+    50%       { box-shadow: 0 0 40px rgba(0,216,255,0.55), 0 0 80px rgba(0,216,255,0.2); }
+  }
+
+  .logo-name { font-size: 26px; font-weight: 900; color: #fff; letter-spacing: -0.5px; }
+  .logo-tag {
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--accent);
+    letter-spacing: 3px;
+    border: 1px solid rgba(0,216,255,0.2);
+    padding: 3px 12px;
+    border-radius: 20px;
+    background: rgba(0,216,255,0.05);
+  }
+
+  /* HEADING */
+  .heading { text-align: center; margin-bottom: 28px; }
+  .heading h2 { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .heading p  { font-size: 13px; color: var(--muted); }
+
+  /* FORM */
+  .form { display: flex; flex-direction: column; gap: 16px; }
+
+  .field { display: flex; flex-direction: column; gap: 7px; }
+
+  .field label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .input-wrap {
+    position: relative;
+    display: flex; align-items: center;
+  }
+
+  .input-icon {
+    position: absolute;
+    right: 14px;
+    font-size: 14px;
+    color: var(--muted);
+    pointer-events: none;
+  }
+
+  .input-wrap input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 42px 12px 16px;
+    color: #fff;
+    font-size: 14px;
+    font-family: 'Cairo', sans-serif;
+    outline: none;
+    transition: all 0.25s;
+    direction: ltr;
+    text-align: right;
+  }
+
+  .input-wrap input::placeholder { color: var(--muted); font-family: 'Cairo', sans-serif; }
+
+  .input-wrap input:focus {
+    border-color: var(--accent);
+    background: rgba(0,216,255,0.04);
+    box-shadow: 0 0 0 3px rgba(0,216,255,0.08);
+  }
+
+  /* show/hide password */
+  .eye-btn {
+    position: absolute;
+    left: 12px;
+    background: none; border: none;
+    color: var(--muted); cursor: pointer;
+    font-size: 14px;
+    transition: color 0.2s;
+  }
+  .eye-btn:hover { color: var(--accent); }
+
+  /* REMEMBER + FORGET */
+  .form-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: -4px;
+  }
+
+  .checkbox-label {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--muted); cursor: pointer;
+  }
+
+  .checkbox-label input[type="checkbox"] { display: none; }
+
+  .custom-check {
+    width: 16px; height: 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    font-size: 10px;
+  }
+
+  .checkbox-label input:checked ~ .custom-check {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #000;
+  }
+
+  .forget-link {
+    font-size: 13px;
+    color: var(--accent);
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .forget-link:hover { opacity: 0.7; }
+
+  /* SUBMIT BTN */
+  .submit-btn {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, var(--accent), #0099cc);
+    color: #000;
+    font-family: 'Cairo', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: all 0.25s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 0 20px rgba(0,216,255,0.25);
+  }
+
+  .submit-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 0 35px rgba(0,216,255,0.45);
+  }
+
+  .submit-btn:active { transform: translateY(0); }
+
+  .submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  /* loading state */
+  .submit-btn.loading .btn-text { display: none; }
+  .submit-btn .spinner { display: none; }
+  .submit-btn.loading .spinner {
+    display: block;
+    width: 18px; height: 18px;
+    border: 2px solid rgba(0,0,0,0.3);
+    border-top-color: #000;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* STATUS BAR */
+  .status-bar {
+    margin-top: 24px;
+    padding: 12px 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .status-dot-wrap {
+    width: 8px; height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 2s infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .status-text { font-size: 12px; color: var(--muted); flex: 1; }
+  .status-text strong { color: var(--green); }
+
+  .version-tag {
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--muted);
+  }
+
+  /* ERROR MSG */
+  .error-msg {
+    display: none;
+    padding: 10px 14px;
+    background: rgba(255,68,102,0.08);
+    border: 1px solid rgba(255,68,102,0.2);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--red);
+    text-align: center;
+    animation: shake 0.4s ease;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  /* Maintenance Screen */
+  .maintenance-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 9998;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+    padding: 40px;
+  }
+
+  .maintenance-screen.active {
+    display: flex;
+  }
+
+  .maintenance-icon {
+    font-size: 72px;
+    animation: spin 4s linear infinite;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 480px) {
+    .card {
+      padding: 28px 20px;
+      margin: 16px;
+    }
+    
+    .logo-icon {
+      width: 48px;
+      height: 48px;
+      font-size: 22px;
+    }
+    
+    .logo-name {
+      font-size: 22px;
+    }
+    
+    .heading h2 {
+      font-size: 18px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<!-- Maintenance Screen -->
+<div class="maintenance-screen" id="maintenanceScreen">
+    <div class="maintenance-icon">🔧</div>
+    <div style="font-size:24px;font-weight:900;color:#fff" id="maintenanceTitle">النظام تحت الصيانة</div>
+    <div style="font-size:14px;color:var(--muted);max-width:400px" id="maintenanceMsg"></div>
+    <div style="font-size:13px;color:var(--accent);font-family:'IBM Plex Mono',monospace" id="maintenanceTimer"></div>
+</div>
+
+<div class="card">
+
+  <div class="logo">
+    <div class="logo-icon">⚡</div>
+    <div class="logo-name">NexHost</div>
+    <div class="logo-tag">HOSTING PANEL V4</div>
+  </div>
+
+  <div class="heading">
+    <h2>مرحباً بعودتك 👋</h2>
+    <p>سجّل دخولك للوصول إلى لوحة التحكم</p>
+  </div>
+
+  <div class="form">
+
+    <div id="errorMsg" class="error-msg"></div>
+
+    <div class="field">
+      <label>👤 اسم المستخدم</label>
+      <div class="input-wrap">
+        <input type="text" id="username" placeholder="أدخل اسم المستخدم" autocomplete="off" />
+        <span class="input-icon">👤</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>🔒 كلمة المرور</label>
+      <div class="input-wrap">
+        <input type="password" id="password" placeholder="أدخل كلمة المرور" autocomplete="off" />
+        <span class="input-icon">🔒</span>
+        <button class="eye-btn" type="button" onclick="togglePass()" id="eyeBtn">👁</button>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label class="checkbox-label">
+        <input type="checkbox" id="remember">
+        <span class="custom-check" id="checkBox">✓</span>
+        تذكرني
+      </label>
+      <span class="forget-link" onclick="showToast('يرجى التواصل مع المشرف', 'info')">نسيت كلمة المرور؟</span>
+    </div>
+
+    <button class="submit-btn" id="loginBtn" onclick="handleLogin()">
+      <div class="spinner"></div>
+      <span class="btn-text">🚀 دخول للوحة التحكم</span>
+    </button>
+
+  </div>
+
+  <div class="status-bar">
+    <div class="status-dot-wrap"></div>
+    <div class="status-text">حالة السيرفر: <strong id="serverStatus">جاري التحقق...</strong></div>
+    <div class="version-tag">v4.0.0</div>
+  </div>
+
+</div>
+
+<script src="assets/js/api.js"></script>
+<script src="assets/js/utils.js"></script>
+<script>
+  // Check if already logged in
+  if (TokenManager.isLoggedIn()) {
+    window.location.href = 'hosting-panel.html';
+  }
+
+  function togglePass() {
+    const inp = document.getElementById('password');
+    const btn = document.getElementById('eyeBtn');
+    if (inp.type === 'password') {
+      inp.type = 'text';
+      btn.textContent = '🙈';
+    } else {
+      inp.type = 'password';
+      btn.textContent = '👁';
+    }
+  }
+
+  // Checkbox toggle
+  document.getElementById('remember').addEventListener('change', function() {
+    const box = document.getElementById('checkBox');
+    if (this.checked) {
+      box.style.background = 'var(--accent)';
+      box.style.borderColor = 'var(--accent)';
+      box.style.color = '#000';
+    } else {
+      box.style.background = 'var(--surface2)';
+      box.style.borderColor = 'var(--border)';
+      box.style.color = 'transparent';
+    }
+  });
+
+  async function handleLogin() {
+    const user = document.getElementById('username').value.trim();
+    const pass = document.getElementById('password').value;
+    const btn = document.getElementById('loginBtn');
+    const err = document.getElementById('errorMsg');
+
+    if (!user || !pass) {
+      err.textContent = '⚠️ يرجى تعبئة جميع الحقول';
+      err.style.display = 'block';
+      return;
+    }
+
+    // Loading state
+    btn.classList.add('loading');
+    btn.disabled = true;
+    err.style.display = 'none';
+
+    try {
+      const result = await AuthAPI.login(user, pass);
+      
+      if (result.success) {
+        btn.style.background = 'linear-gradient(135deg, var(--green), #00cc66)';
+        btn.innerHTML = '<span class="btn-text">✅ جاري التحويل...</span>';
+        
+        showToast('تم تسجيل الدخول بنجاح!', 'success');
+        
+        setTimeout(() => {
+          window.location.href = 'hosting-panel.html';
+        }, 800);
+      } else {
+        err.textContent = '❌ ' + (result.error || 'اسم المستخدم أو كلمة المرور غير صحيحة');
+        err.style.display = 'block';
+        err.style.animation = 'none';
+        void err.offsetWidth;
+        err.style.animation = 'shake 0.4s ease';
+        
+        btn.classList.remove('loading');
+        btn.disabled = false;
+      }
+    } catch (error) {
+      err.textContent = '❌ حدث خطأ في الاتصال بالسيرفر';
+      err.style.display = 'block';
+      
+      btn.classList.remove('loading');
+      btn.disabled = false;
+    }
+  }
+
+  // Check server status
+  async function checkServerStatus() {
+    try {
+      const response = await fetch('/api/health');
+      const statusEl = document.getElementById('serverStatus');
+      if (response.ok) {
+        statusEl.textContent = 'يعمل بشكل طبيعي';
+        statusEl.style.color = 'var(--green)';
+      } else {
+        statusEl.textContent = 'غير متاح';
+        statusEl.style.color = 'var(--red)';
+      }
+    } catch (e) {
+      document.getElementById('serverStatus').textContent = 'غير متاح';
+      document.getElementById('serverStatus').style.color = 'var(--red)';
+    }
+  }
+
+  // Check maintenance status
+  async function checkMaintenanceStatus() {
+    try {
+      const response = await fetch('/api/admin/maintenance/status');
+      const data = await response.json();
+      
+      if (data.maintenance) {
+        const screen = document.getElementById('maintenanceScreen');
+        const msgEl = document.getElementById('maintenanceMsg');
+        msgEl.textContent = data.message || 'النظام تحت الصيانة، سيعود قريباً 🔧';
+        screen.classList.add('active');
+        document.querySelector('.card').style.display = 'none';
+      }
+    } catch (e) {}
+  }
+
+  // Enter key
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleLogin();
+  });
+
+  // Check on load
+  checkServerStatus();
+  checkMaintenanceStatus();
+</script>
+
+</body>
+</html>

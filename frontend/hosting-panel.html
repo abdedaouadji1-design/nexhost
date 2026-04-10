@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexHost V4 — لوحة التحكم</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/shared.css">
+<style>
+  /* PROJECTS GRID */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+  }
+
+  .project-card:hover {
+    border-color: rgba(0,216,255,0.3);
+    transform: translateY(-3px);
+    box-shadow: var(--glow);
+  }
+
+  .project-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .project-lang {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .lang-py {
+    background: rgba(0,216,255,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(0,216,255,0.2);
+  }
+
+  .project-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 5px;
+  }
+
+  .project-desc {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+
+  .project-meta {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .project-bar-bg {
+    height: 3px;
+    background: var(--surface2);
+    border-radius: 2px;
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+
+  .project-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 1s ease;
+  }
+
+  .project-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .action-btn {
+    flex: 1;
+    padding: 7px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    font-size: 12px;
+    cursor: pointer;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 600;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  .action-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(0,216,255,0.05);
+  }
+
+  .action-btn.stop:hover {
+    border-color: var(--red);
+    color: var(--red);
+    background: rgba(255,68,102,0.05);
+  }
+
+  /* ADD NEW CARD */
+  .add-project-card {
+    border-style: dashed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 200px;
+    opacity: 0.6;
+    transition: opacity var(--transition-fast);
+  }
+
+  .add-project-card:hover {
+    opacity: 1;
+    border-color: var(--accent);
+  }
+
+  /* BOTTOM GRID */
+  .bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  /* LOG TERMINAL */
+  .log-terminal {
+    background: #050810;
+    padding: 14px 18px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    max-height: 200px;
+    overflow-y: auto;
+    line-height: 1.8;
+  }
+
+  .log-line {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+  }
+
+  .log-time {
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .log-level-info { color: var(--accent); }
+  .log-level-warn { color: var(--yellow); }
+  .log-level-err { color: var(--red); }
+  .log-level-ok { color: var(--green); }
+  .log-msg { color: #8b9ab0; }
+  .log-msg.bright { color: var(--text); }
+
+  /* RESOURCES */
+  .resource-list {
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .resource-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .resource-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .resource-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .resource-val {
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--muted);
+  }
+
+  .res-bar-bg {
+    height: 5px;
+    background: var(--surface2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .res-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 1.2s ease;
+  }
+
+  .fill-cyan {
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+  }
+
+  .fill-purple {
+    background: linear-gradient(90deg, var(--accent2), #a78bfa);
+  }
+
+  .fill-green {
+    background: linear-gradient(90deg, #00cc66, var(--green));
+  }
+
+  /* UPLOAD ZONE */
+  .upload-zone {
+    margin: 16px 20px;
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    text-align: center;
+    transition: all var(--transition-fast);
+    cursor: pointer;
+  }
+
+  .upload-zone:hover {
+    border-color: var(--accent);
+    background: rgba(0,216,255,0.03);
+  }
+
+  .upload-icon {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+
+  .upload-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .upload-sub {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .upload-tag {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 3px 10px;
+    background: rgba(0,216,255,0.08);
+    border: 1px solid rgba(0,216,255,0.15);
+    border-radius: 5px;
+    font-size: 11px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--accent);
+    margin: 10px 4px 0;
+  }
+
+  /* SECTION HEADER */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .section-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--muted);
+  }
+
+  .empty-state-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .projects-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .projects-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .bottom-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .content {
+      padding: 16px;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .project-actions {
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      font-size: 11px;
+      padding: 6px;
+    }
+  }
+</style>
+</head>
+<body class="page-transition">
+
+<!-- Broadcast Banner -->
+<div class="broadcast-banner" id="broadcastBanner">
+    <span id="broadcastIcon">📢</span>
+    <span id="broadcastMsg"></span>
+    <button onclick="document.getElementById('broadcastBanner').classList.remove('show')" 
+            style="margin-right:auto;background:none;border:none;color:inherit;cursor:pointer">×</button>
+</div>
+
+<!-- Maintenance Screen -->
+<div class="maintenance-screen" id="maintenanceScreen">
+    <div class="maintenance-icon">🔧</div>
+    <div style="font-size:24px;font-weight:900;color:#fff" id="maintenanceTitle">النظام تحت الصيانة</div>
+    <div style="font-size:14px;color:var(--muted);max-width:400px" id="maintenanceMsg"></div>
+    <div style="font-size:13px;color:var(--accent);font-family:'IBM Plex Mono',monospace" id="maintenanceTimer"></div>
+</div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      <div>
+        <div class="logo-text">NexHost</div>
+        <div class="logo-sub">PANEL v4.0</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-section-label">MAIN</div>
+      <a href="hosting-panel.html" class="nav-item active">
+        <span class="nav-icon">🏠</span> لوحة التحكم
+      </a>
+      <a href="hosting-panel.html" class="nav-item">
+        <span class="nav-icon">📦</span> مشاريعي
+        <span class="nav-badge" id="projectCount">0</span>
+      </a>
+      <a href="upload.html" class="nav-item">
+        <span class="nav-icon">📤</span> رفع مشروع
+      </a>
+
+      <div class="nav-section-label">الإدارة</div>
+      <a href="admin.html" class="nav-item admin-only" id="adminNavItem" style="display:none">
+        <span class="nav-icon">👑</span> لوحة الأدمن
+      </a>
+      <a href="users.html" class="nav-item admin-only" id="usersNavItem" style="display:none">
+        <span class="nav-icon">👥</span> المستخدمين
+      </a>
+      <a href="settings.html" class="nav-item">
+        <span class="nav-icon">🛠️</span> الإعدادات
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-card" onclick="logout()">
+        <div class="avatar" id="userAvatar">أ</div>
+        <div class="user-info">
+          <div class="user-name" id="userName">أحمد</div>
+          <div class="user-plan" id="userRole">ADMIN</div>
+        </div>
+        <span style="color:var(--muted)">↩</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MOBILE MENU BUTTON -->
+  <button class="mobile-menu-btn" onclick="toggleSidebar()" style="position:fixed;top:10px;right:10px;z-index:101">☰</button>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="topbar">
+      <div>
+        <div class="page-title">لوحة التحكم</div>
+        <div class="page-sub" id="welcomeMessage">مرحباً بك — كل شيء يعمل بشكل مثالي ✨</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost superadmin-only" id="superadminBtn" style="display:none" onclick="location.href='admin.html'">
+          ⚙️ لوحة الأدمن
+        </button>
+        <button class="btn btn-ghost" onclick="loadDashboard()">🔄 تحديث</button>
+        <a href="upload.html" class="btn btn-primary">+ مشروع جديد</a>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- STATS -->
+      <div class="stats-grid">
+        <div class="stat-card cyan">
+          <div class="stat-header">
+            <span class="stat-label">المشاريع الكلية</span>
+            <span class="stat-icon">📦</span>
+          </div>
+          <div class="stat-value" id="totalProjects">0</div>
+          <div class="stat-change"><span class="up">✓</span> مشروع</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-header">
+            <span class="stat-label">تشغيل الآن</span>
+            <span class="stat-icon">🟢</span>
+          </div>
+          <div class="stat-value" id="runningProjects">0</div>
+          <div class="stat-change"><span class="up">✓</span> نشط</div>
+        </div>
+        <div class="stat-card purple">
+          <div class="stat-header">
+            <span class="stat-label">استخدام CPU</span>
+            <span class="stat-icon">⚡</span>
+          </div>
+          <div class="stat-value" id="cpuUsage">0<span style="font-size:16px;color:var(--muted)">%</span></div>
+          <div class="stat-change" id="cpuText">جاري الحساب...</div>
+        </div>
+        <div class="stat-card yellow">
+          <div class="stat-header">
+            <span class="stat-label">المساحة المستخدمة</span>
+            <span class="stat-icon">💾</span>
+          </div>
+          <div class="stat-value" id="diskUsage">0<span style="font-size:16px;color:var(--muted)">GB</span></div>
+          <div class="stat-change">من أصل <span style="color:#fff" id="diskTotal">10GB</span></div>
+        </div>
+      </div>
+
+      <!-- QUICK LINKS -->
+      <div class="quick-links-section" id="quickLinksSection" style="display:none">
+        <div class="section-header">
+          <div>
+            <div class="section-title">🔗 روابط سريعة</div>
+            <div class="section-sub">وصول سريع للروابط المهمة</div>
+          </div>
+        </div>
+        <div class="quick-links-grid" id="quickLinksContainer"></div>
+      </div>
+
+      <!-- PROJECTS -->
+      <div class="section-header">
+        <div>
+          <div class="section-title">🚀 المشاريع</div>
+          <div class="section-sub">إدارة وتحكم كامل في كل بوت أو سكريبت</div>
+        </div>
+        <button class="btn btn-ghost" style="font-size:12px" onclick="showToast('قريباً', 'info')">عرض الكل ←</button>
+      </div>
+
+      <div class="projects-grid" id="projectsGrid">
+        <!-- Projects will be loaded here -->
+        <div class="empty-state">
+          <div class="empty-state-icon">📭</div>
+          <div>لا توجد مشاريع</div>
+          <div style="font-size:12px;margin-top:8px">اضغط على "مشروع جديد" لبدء الاستضافة</div>
+        </div>
+      </div>
+
+      <!-- BOTTOM -->
+      <div class="bottom-grid">
+
+        <!-- LOGS -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📋 السجلات المباشرة</div>
+            <button class="btn btn-ghost" style="font-size:11px;padding:5px 10px" onclick="clearLogs()">مسح</button>
+          </div>
+          <div class="log-terminal" id="logTerminal">
+            <div class="log-line">
+              <span class="log-time" id="currentTime">--:--:--</span>
+              <span class="log-level-ok">[OK]</span>
+              <span class="log-msg bright">النظام جاهز ▌</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RESOURCES + UPLOAD -->
+        <div style="display:flex;flex-direction:column;gap:16px;">
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">📊 موارد السيرفر</div>
+              <span style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--green)">● LIVE</span>
+            </div>
+            <div class="resource-list">
+              <div class="resource-row">
+                <div class="resource-top">
+                  <span class="resource-name">المعالج CPU</span>
+                  <span class="resource-val" id="cpuVal">0% / 100%</span>
+                </div>
+                <div class="res-bar-bg">
+                  <div class="res-bar-fill fill-cyan" id="cpuBar" style="width:0%"></div>
+                </div>
+              </div>
+              <div class="resource-row">
+                <div class="resource-top">
+                  <span class="resource-name">الذاكرة RAM</span>
+                  <span class="resource-val" id="ramVal">0GB / 0GB</span>
+                </div>
+                <div class="res-bar-bg">
+                  <div class="res-bar-fill fill-purple" id="ramBar" style="width:0%"></div>
+                </div>
+              </div>
+              <div class="resource-row">
+                <div class="resource-top">
+                  <span class="resource-name">التخزين Disk</span>
+                  <span class="resource-val" id="diskVal">0GB / 0GB</span>
+                </div>
+                <div class="res-bar-bg">
+                  <div class="res-bar-fill fill-green" id="diskBar" style="width:0%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">📤 رفع مشروع جديد</div>
+            </div>
+            <div class="upload-zone" onclick="location.href='upload.html'">
+              <div class="upload-icon">📂</div>
+              <div class="upload-title">اسحب ملفاتك هنا</div>
+              <div class="upload-sub">أو اضغط للاختيار من جهازك</div>
+              <div>
+                <span class="upload-tag">.py</span>
+                <span class="upload-tag">.zip</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </main>
+</div>
+
+<!-- BOTTOM NAVIGATION (Mobile) -->
+<nav class="bottom-nav">
+  <a href="hosting-panel.html" class="bnav-item active">
+    <span class="bni">🏠</span><span class="bnl">الرئيسية</span>
+  </a>
+  <a href="upload.html" class="bnav-item">
+    <span class="bni">📤</span><span class="bnl">رفع</span>
+  </a>
+  <a href="admin.html" class="bnav-item admin-only" style="display:none">
+    <span class="bni">👑</span><span class="bnl">الأدمن</span>
+  </a>
+  <a href="settings.html" class="bnav-item">
+    <span class="bni">🛠️</span><span class="bnl">إعدادات</span>
+  </a>
+  <a href="#" class="bnav-item" onclick="TokenManager.logout();return false;">
+    <span class="bni">↩</span><span class="bnl">خروج</span>
+  </a>
+</nav>
+
+<script src="assets/js/api.js"></script>
+<script src="assets/js/utils.js"></script>
+<script>
+  let projects = [];
+  let systemStatsInterval;
+
+  // Load dashboard data
+  async function loadDashboard() {
+    try {
+      // Load projects
+      const projectsResult = await ProjectsAPI.getAll();
+      if (projectsResult.success) {
+        projects = projectsResult.projects || [];
+        renderProjects();
+        updateStats();
+      }
+
+      // Load system stats
+      await loadSystemStats();
+
+    } catch (error) {
+      console.error('Error loading dashboard:', error);
+      showToast('خطأ في تحميل البيانات', 'error');
+    }
+  }
+
+  // Render projects
+  function renderProjects() {
+    const grid = document.getElementById('projectsGrid');
+    
+    if (projects.length === 0) {
+      grid.innerHTML = `
+        <div class="empty-state" style="grid-column:1/-1">
+          <div class="empty-state-icon">📭</div>
+          <div>لا توجد مشاريع</div>
+          <div style="font-size:12px;margin-top:8px">
+            <a href="upload.html" style="color:var(--accent)">اضغط هنا</a> لإضافة مشروع جديد
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    grid.innerHTML = projects.map(project => `
+      <div class="project-card" onclick="location.href='project-details.html?id=${project.id}'">
+        <div class="project-top">
+          <span class="project-lang lang-py">
+            🐍 PYTHON
+          </span>
+          <span class="status-dot">
+            <span class="dot ${project.status === 'running' ? 'dot-green' : 'dot-red'}"></span>
+            <span style="color:${project.status === 'running' ? 'var(--green)' : 'var(--red)'}">
+              ${project.status === 'running' ? 'يعمل' : 'متوقف'}
+            </span>
+          </span>
+        </div>
+        <div class="project-name">${escapeHtml(project.name)}</div>
+        <div class="project-desc">${escapeHtml(project.description || 'لا يوجد وصف')}</div>
+        <div class="project-meta">
+          <span class="meta-item">📁 ${project.main_file || 'main.py'}</span>
+          <span class="meta-item">🕒 ${FormatUtils.formatRelativeTime(project.created_at)}</span>
+        </div>
+        <div class="project-bar-bg">
+          <div class="project-bar-fill" style="width:${project.status === 'running' ? '75%' : '0%'}"></div>
+        </div>
+        <div class="project-actions" onclick="event.stopPropagation()">
+          <button class="action-btn" onclick="viewLogs(${project.id})">📋 Logs</button>
+          <button class="action-btn" onclick="location.href='project-details.html?id=${project.id}&tab=env'">⚙️ .env</button>
+          <button class="action-btn ${project.status === 'running' ? 'stop' : ''}" 
+                  onclick="toggleProject(${project.id}, '${project.status}')">
+            ${project.status === 'running' ? '⏹ إيقاف' : '▶ تشغيل'}
+          </button>
+        </div>
+      </div>
+    `).join('') + `
+      <div class="project-card add-project-card" onclick="location.href='upload.html'">
+        <div style="font-size:32px">+</div>
+        <div style="font-size:14px;font-weight:700;color:#fff">مشروع جديد</div>
+        <div style="font-size:12px;color:var(--muted);text-align:center">ارفع ملف .py</div>
+      </div>
+    `;
+  }
+
+  // Update stats
+  function updateStats() {
+    const total = projects.length;
+    const running = projects.filter(p => p.status === 'running').length;
+    
+    document.getElementById('totalProjects').textContent = total;
+    document.getElementById('runningProjects').textContent = running;
+    document.getElementById('projectCount').textContent = total;
+  }
+
+  // Load system stats
+  async function loadSystemStats() {
+    try {
+      const result = await SystemAPI.getStats();
+      if (result.success && result.stats) {
+        const stats = result.stats;
+        
+        // CPU
+        const cpuPercent = Math.round(stats.cpu?.percent || 0);
+        document.getElementById('cpuUsage').innerHTML = `${cpuPercent}<span style="font-size:16px;color:var(--muted)">%</span>`;
+        document.getElementById('cpuVal').textContent = `${cpuPercent}% / 100%`;
+        document.getElementById('cpuBar').style.width = `${cpuPercent}%`;
+        document.getElementById('cpuText').textContent = cpuPercent > 80 ? 'مرتفع!' : 'طبيعي';
+        document.getElementById('cpuText').style.color = cpuPercent > 80 ? 'var(--red)' : 'var(--green)';
+        
+        // RAM
+        const ramPercent = stats.memory?.percent || 0;
+        const ramUsed = stats.memory?.used_gb || 0;
+        const ramTotal = stats.memory?.total_gb || 0;
+        document.getElementById('ramVal').textContent = `${ramUsed}GB / ${ramTotal}GB`;
+        document.getElementById('ramBar').style.width = `${ramPercent}%`;
+        
+        // Disk
+        const diskPercent = stats.disk?.percent || 0;
+        const diskUsed = stats.disk?.used_gb || 0;
+        const diskTotal = stats.disk?.total_gb || 0;
+        document.getElementById('diskUsage').innerHTML = `${diskUsed}<span style="font-size:16px;color:var(--muted)">GB</span>`;
+        document.getElementById('diskTotal').textContent = `${diskTotal}GB`;
+        document.getElementById('diskVal').textContent = `${diskUsed}GB / ${diskTotal}GB`;
+        document.getElementById('diskBar').style.width = `${diskPercent}%`;
+      }
+    } catch (error) {
+      console.error('Error loading system stats:', error);
+    }
+  }
+
+  // Toggle project start/stop
+  async function toggleProject(projectId, currentStatus) {
+    if (currentStatus === 'running') {
+      const result = await ProjectsAPI.stop(projectId);
+      if (result.success) {
+        showToast('تم إيقاف المشروع', 'success');
+      } else {
+        showToast(result.error || 'فشل الإيقاف', 'error');
+      }
+    } else {
+      const result = await ProjectsAPI.start(projectId);
+      if (result.success) {
+        showToast('تم تشغيل المشروع', 'success');
+      } else {
+        showToast(result.error || 'فشل التشغيل', 'error');
+      }
+    }
+    
+    // Reload after a short delay
+    setTimeout(loadDashboard, 1000);
+  }
+
+  // View logs
+  function viewLogs(projectId) {
+    location.href = `project-details.html?id=${projectId}&tab=logs`;
+  }
+
+  // Clear logs display
+  function clearLogs() {
+    document.getElementById('logTerminal').innerHTML = `
+      <div class="log-line">
+        <span class="log-time">${new Date().toLocaleTimeString('ar-SA')}</span>
+        <span class="log-level-ok">[OK]</span>
+        <span class="log-msg bright">تم مسح السجلات ▌</span>
+      </div>
+    `;
+  }
+
+  // Toggle sidebar on mobile
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+
+  // Logout
+  function logout() {
+    TokenManager.logout();
+  }
+
+  // Escape HTML
+  function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // Update time
+  function updateTime() {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('ar-SA');
+    const timeEl = document.getElementById('currentTime');
+    if (timeEl) timeEl.textContent = timeStr;
+  }
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', () => {
+    // Check auth
+    if (!TokenManager.isLoggedIn()) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    // Show admin options if admin
+    const user = TokenManager.getUser();
+    if (user && ['admin', 'superadmin'].includes(user.role)) {
+      document.getElementById('adminNavItem').style.display = 'flex';
+      document.getElementById('usersNavItem').style.display = 'flex';
+      document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
+    }
+
+    // Show superadmin button
+    if (user && user.role === 'superadmin') {
+      document.getElementById('superadminBtn').style.display = 'inline-flex';
+    }
+
+    // Update user info
+    if (user) {
+      document.getElementById('userName').textContent = user.username;
+      document.getElementById('userRole').textContent = user.role.toUpperCase();
+      document.getElementById('userAvatar').textContent = user.username.charAt(0).toUpperCase();
+      document.getElementById('welcomeMessage').textContent = `مرحباً ${user.username} — كل شيء يعمل بشكل مثالي ✨`;
+    }
+
+    // Load dashboard
+    loadDashboard();
+
+    // Update stats periodically
+    systemStatsInterval = setInterval(loadSystemStats, 5000);
+    
+    // Update time
+    updateTime();
+    setInterval(updateTime, 1000);
+  });
+
+  // Cleanup on page unload
+  window.addEventListener('beforeunload', () => {
+    if (systemStatsInterval) {
+      clearInterval(systemStatsInterval);
+    }
+  });
+</script>
+
+</body>
+</html>

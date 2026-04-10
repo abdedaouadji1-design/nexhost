@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexHost V4 — لوحة الأدمن</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/shared.css">
+<style>
+  .admin-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .admin-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .admin-card.full-width {
+    grid-column: 1 / -1;
+  }
+
+  .admin-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .admin-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .admin-body {
+    padding: 20px;
+  }
+
+  .broadcast-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .broadcast-type-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .broadcast-type-btn {
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface2);
+    color: var(--muted);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .broadcast-type-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(0,216,255,0.05);
+  }
+
+  .quick-link-form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .quick-link-form .field {
+    margin-bottom: 0;
+  }
+
+  .quick-link-form .field.full-width {
+    grid-column: 1 / -1;
+  }
+
+  .quick-links-list {
+    margin-top: 16px;
+  }
+
+  .quick-link-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+
+  .quick-link-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .quick-link-info {
+    flex: 1;
+  }
+
+  .quick-link-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .quick-link-type {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .quick-link-actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  .stats-overview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .stat-mini {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .stat-mini-value {
+    font-size: 28px;
+    font-weight: 900;
+    color: #fff;
+  }
+
+  .stat-mini-label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  @media (max-width: 768px) {
+    .admin-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .broadcast-type-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .quick-link-form {
+      grid-template-columns: 1fr;
+    }
+
+    .stats-overview {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
+</head>
+<body class="page-transition">
+
+<!-- Broadcast Banner -->
+<div class="broadcast-banner" id="broadcastBanner">
+    <span id="broadcastIcon">📢</span>
+    <span id="broadcastMsg"></span>
+    <button onclick="document.getElementById('broadcastBanner').classList.remove('show')" 
+            style="margin-right:auto;background:none;border:none;color:inherit;cursor:pointer">×</button>
+</div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      <div>
+        <div class="logo-text">NexHost</div>
+        <div class="logo-sub">PANEL v4.0</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-section-label">MAIN</div>
+      <a href="hosting-panel.html" class="nav-item">
+        <span class="nav-icon">🏠</span> لوحة التحكم
+      </a>
+      <a href="hosting-panel.html" class="nav-item">
+        <span class="nav-icon">📦</span> مشاريعي
+      </a>
+      <a href="upload.html" class="nav-item">
+        <span class="nav-icon">📤</span> رفع مشروع
+      </a>
+
+      <div class="nav-section-label">الإدارة</div>
+      <a href="admin.html" class="nav-item active">
+        <span class="nav-icon">👑</span> لوحة الأدمن
+      </a>
+      <a href="users.html" class="nav-item">
+        <span class="nav-icon">👥</span> المستخدمين
+      </a>
+      <a href="settings.html" class="nav-item">
+        <span class="nav-icon">🛠️</span> الإعدادات
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-card" onclick="logout()">
+        <div class="avatar" id="userAvatar">أ</div>
+        <div class="user-info">
+          <div class="user-name" id="userName">أحمد</div>
+          <div class="user-plan" id="userRole">ADMIN</div>
+        </div>
+        <span style="color:var(--muted)">↩</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MOBILE MENU BUTTON -->
+  <button class="mobile-menu-btn" onclick="toggleSidebar()" style="position:fixed;top:10px;right:10px;z-index:101">☰</button>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="topbar">
+      <div>
+        <div class="page-title">لوحة الأدمن</div>
+        <div class="page-sub">إدارة النظام والمستخدمين</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-primary" onclick="loadAdminData()">🔄 تحديث</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- Stats Overview -->
+      <div class="stats-overview" style="margin-bottom: 20px;">
+        <div class="stat-mini">
+          <div class="stat-mini-value" id="statUsers">0</div>
+          <div class="stat-mini-label">المستخدمين</div>
+        </div>
+        <div class="stat-mini">
+          <div class="stat-mini-value" id="statProjects">0</div>
+          <div class="stat-mini-label">المشاريع</div>
+        </div>
+        <div class="stat-mini">
+          <div class="stat-mini-value" id="statRunning">0</div>
+          <div class="stat-mini-label">يعمل الآن</div>
+        </div>
+        <div class="stat-mini">
+          <div class="stat-mini-value" id="statCPU">0%</div>
+          <div class="stat-mini-label">استخدام CPU</div>
+        </div>
+      </div>
+
+      <div class="admin-grid">
+
+        <!-- Broadcast Messages -->
+        <div class="admin-card full-width">
+          <div class="admin-header">
+            <div class="admin-title">📢 إرسال رسالة للجميع</div>
+          </div>
+          <div class="admin-body">
+            <div class="broadcast-form">
+              <div class="broadcast-type-grid">
+                <button class="broadcast-type-btn active" data-type="info" onclick="selectBroadcastType(this)">
+                  ℹ️ معلومات
+                </button>
+                <button class="broadcast-type-btn" data-type="warning" onclick="selectBroadcastType(this)">
+                  ⚠️ تحذير
+                </button>
+                <button class="broadcast-type-btn" data-type="error" onclick="selectBroadcastType(this)">
+                  ❌ خطأ
+                </button>
+                <button class="broadcast-type-btn" data-type="success" onclick="selectBroadcastType(this)">
+                  ✅ نجاح
+                </button>
+              </div>
+              
+              <textarea class="textarea" id="broadcastMessage" rows="3" 
+                        placeholder="اكتب رسالتك هنا..."></textarea>
+              
+              <div class="field" style="margin-bottom:0">
+                <label style="font-size:11px">مدة العرض (دقائق، اترك فارغاً للدائم)</label>
+                <input type="number" class="input" id="broadcastDuration" 
+                       placeholder="مثال: 60" style="width:150px">
+              </div>
+              
+              <button class="btn btn-primary" onclick="sendBroadcast()">
+                📤 إرسال للجميع
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="admin-card">
+          <div class="admin-header">
+            <div class="admin-title">🔗 روابط سريعة</div>
+            <button class="btn btn-ghost" style="font-size:11px;padding:5px 12px" 
+                    onclick="document.getElementById('quickLinkForm').style.display='block'">+ جديد</button>
+          </div>
+          <div class="admin-body">
+            <div class="quick-link-form" id="quickLinkForm" style="display:none">
+              <div class="field">
+                <label>العنوان</label>
+                <input type="text" class="input" id="qlTitle" placeholder="مثال: قناتنا على Telegram">
+              </div>
+              <div class="field">
+                <label>الأيقونة</label>
+                <select class="select" id="qlIcon">
+                  <option value="🔗">🔗 رابط</option>
+                  <option value="📱">📱 Telegram</option>
+                  <option value="💬">💬 تواصل</option>
+                  <option value="📢">📢 إعلان</option>
+                  <option value="🎮">🎮 ألعاب</option>
+                  <option value="📚">📚 تعليم</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>النوع</label>
+                <select class="select" id="qlType">
+                  <option value="url">رابط URL</option>
+                  <option value="telegram_channel">قناة Telegram</option>
+                  <option value="telegram_contact">حساب Telegram</option>
+                  <option value="message">رسالة</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>اللون</label>
+                <select class="select" id="qlColor">
+                  <option value="cyan">سماوي</option>
+                  <option value="purple">بنفسجي</option>
+                  <option value="green">أخضر</option>
+                  <option value="yellow">أصفر</option>
+                  <option value="red">أحمر</option>
+                </select>
+              </div>
+              <div class="field full-width">
+                <label>المحتوى (رابط أو رسالة)</label>
+                <input type="text" class="input" id="qlContent" placeholder="https://... أو @username">
+              </div>
+              <div class="modal-footer" style="grid-column:1/-1;margin:0">
+                <button class="btn btn-ghost" onclick="document.getElementById('quickLinkForm').style.display='none'">إلغاء</button>
+                <button class="btn btn-primary" onclick="addQuickLink()">إضافة</button>
+              </div>
+            </div>
+            
+            <div class="quick-links-list" id="quickLinksList">
+              <div class="empty-state" style="padding:20px">
+                <div style="font-size:24px">🔗</div>
+                <div style="font-size:12px;color:var(--muted)">لا توجد روابط سريعة</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Logs -->
+        <div class="admin-card">
+          <div class="admin-header">
+            <div class="admin-title">📋 سجل النشاطات</div>
+            <button class="btn btn-ghost" style="font-size:11px;padding:5px 12px" onclick="clearActivity()">مسح</button>
+          </div>
+          <div class="admin-body">
+            <div class="log-terminal" id="activityLogs" style="max-height:300px">
+              <div class="log-line">
+                <span class="log-time">--:--:--</span>
+                <span class="log-level-info">[INFO]</span>
+                <span class="log-msg">جاري تحميل السجلات...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div><!-- /content -->
+  </main>
+</div>
+
+<!-- BOTTOM NAVIGATION (Mobile) -->
+<nav class="bottom-nav">
+  <a href="hosting-panel.html" class="bnav-item">
+    <span class="bni">🏠</span><span class="bnl">الرئيسية</span>
+  </a>
+  <a href="upload.html" class="bnav-item">
+    <span class="bni">📤</span><span class="bnl">رفع</span>
+  </a>
+  <a href="admin.html" class="bnav-item active">
+    <span class="bni">👑</span><span class="bnl">الأدمن</span>
+  </a>
+  <a href="settings.html" class="bnav-item">
+    <span class="bni">🛠️</span><span class="bnl">إعدادات</span>
+  </a>
+  <a href="#" class="bnav-item" onclick="TokenManager.logout();return false;">
+    <span class="bni">↩</span><span class="bnl">خروج</span>
+  </a>
+</nav>
+
+<script src="assets/js/api.js"></script>
+<script src="assets/js/utils.js"></script>
+<script>
+  let selectedBroadcastType = 'info';
+  let quickLinks = [];
+
+  async function loadAdminData() {
+    try {
+      // Load users count
+      const usersResult = await UsersAPI.getAll();
+      if (usersResult.success) {
+        document.getElementById('statUsers').textContent = usersResult.users?.length || 0;
+      }
+
+      // Load projects
+      const projectsResult = await ProjectsAPI.getAll();
+      if (projectsResult.success) {
+        const projects = projectsResult.projects || [];
+        document.getElementById('statProjects').textContent = projects.length;
+        document.getElementById('statRunning').textContent = projects.filter(p => p.status === 'running').length;
+      }
+
+      // Load system stats
+      const statsResult = await SystemAPI.getStats();
+      if (statsResult.success) {
+        const cpu = Math.round(statsResult.stats?.cpu?.percent || 0);
+        document.getElementById('statCPU').textContent = cpu + '%';
+      }
+
+      // Load quick links
+      await loadQuickLinks();
+
+      // Load activity logs
+      await loadActivityLogs();
+
+    } catch (error) {
+      console.error('Error loading admin data:', error);
+    }
+  }
+
+  async function loadQuickLinks() {
+    try {
+      const result = await AdminAPI.getAllQuickLinks();
+      if (result.success) {
+        quickLinks = result.links || [];
+        renderQuickLinks();
+      }
+    } catch (e) {
+      console.error('Error loading quick links:', e);
+    }
+  }
+
+  function renderQuickLinks() {
+    const list = document.getElementById('quickLinksList');
+    
+    if (quickLinks.length === 0) {
+      list.innerHTML = `
+        <div class="empty-state" style="padding:20px">
+          <div style="font-size:24px">🔗</div>
+          <div style="font-size:12px;color:var(--muted)">لا توجد روابط سريعة</div>
+        </div>
+      `;
+      return;
+    }
+
+    const colorMap = {
+      cyan: 'linear-gradient(135deg, var(--accent), #0099cc)',
+      purple: 'linear-gradient(135deg, var(--accent2), #a78bfa)',
+      green: 'linear-gradient(135deg, var(--green), #00cc66)',
+      yellow: 'linear-gradient(135deg, var(--yellow), #ffaa00)',
+      red: 'linear-gradient(135deg, var(--red), #ff6688)'
+    };
+
+    list.innerHTML = quickLinks.map(link => `
+      <div class="quick-link-item">
+        <div class="quick-link-icon" style="background:${colorMap[link.color] || colorMap.cyan}">
+          ${link.icon}
+        </div>
+        <div class="quick-link-info">
+          <div class="quick-link-title">${escapeHtml(link.title)}</div>
+          <div class="quick-link-type">${link.type}</div>
+        </div>
+        <div class="quick-link-actions">
+          <button class="btn btn-danger" style="font-size:11px;padding:5px 10px" 
+                  onclick="deleteQuickLink(${link.id})">🗑️</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function loadActivityLogs() {
+    try {
+      const result = await ActivityAPI.getAll(20);
+      const logs = result.logs || [];
+      const container = document.getElementById('activityLogs');
+      
+      if (logs.length === 0) {
+        container.innerHTML = `
+          <div class="log-line">
+            <span class="log-time">--:--:--</span>
+            <span class="log-level-info">[INFO]</span>
+            <span class="log-msg">لا توجد نشاطات</span>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = logs.map(log => `
+        <div class="log-line">
+          <span class="log-time">${new Date(log.created_at).toLocaleTimeString('ar-SA')}</span>
+          <span class="log-level-info">[${log.action?.toUpperCase() || 'INFO'}]</span>
+          <span class="log-msg">${escapeHtml(log.username || 'System')}: ${escapeHtml(log.details || '')}</span>
+        </div>
+      `).join('');
+    } catch (e) {
+      console.error('Error loading activity logs:', e);
+    }
+  }
+
+  function selectBroadcastType(btn) {
+    document.querySelectorAll('.broadcast-type-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedBroadcastType = btn.dataset.type;
+  }
+
+  async function sendBroadcast() {
+    const message = document.getElementById('broadcastMessage').value.trim();
+    const duration = document.getElementById('broadcastDuration').value;
+    
+    if (!message) {
+      showToast('يرجى كتابة رسالة', 'error');
+      return;
+    }
+    
+    try {
+      const result = await AdminAPI.createBroadcast(
+        message, 
+        selectedBroadcastType, 
+        duration ? parseInt(duration) : null
+      );
+      
+      if (result.success) {
+        showToast('تم إرسال الرسالة', 'success');
+        document.getElementById('broadcastMessage').value = '';
+        document.getElementById('broadcastDuration').value = '';
+      } else {
+        showToast(result.error || 'فشل إرسال الرسالة', 'error');
+      }
+    } catch (e) {
+      showToast('خطأ في إرسال الرسالة', 'error');
+    }
+  }
+
+  async function addQuickLink() {
+    const title = document.getElementById('qlTitle').value.trim();
+    const icon = document.getElementById('qlIcon').value;
+    const type = document.getElementById('qlType').value;
+    const color = document.getElementById('qlColor').value;
+    const content = document.getElementById('qlContent').value.trim();
+    
+    if (!title || !content) {
+      showToast('يرجى ملء جميع الحقول', 'error');
+      return;
+    }
+    
+    try {
+      const result = await AdminAPI.createQuickLink({
+        title, icon, type, color, content, visible_to: 'all'
+      });
+      
+      if (result.success) {
+        showToast('تم إضافة الرابط', 'success');
+        document.getElementById('qlTitle').value = '';
+        document.getElementById('qlContent').value = '';
+        document.getElementById('quickLinkForm').style.display = 'none';
+        await loadQuickLinks();
+      } else {
+        showToast(result.error || 'فشل إضافة الرابط', 'error');
+      }
+    } catch (e) {
+      showToast('خطأ في إضافة الرابط', 'error');
+    }
+  }
+
+  async function deleteQuickLink(linkId) {
+    if (!confirm('هل أنت متأكد من حذف هذا الرابط؟')) return;
+    
+    try {
+      const result = await AdminAPI.deleteQuickLink(linkId);
+      if (result.success) {
+        showToast('تم حذف الرابط', 'success');
+        await loadQuickLinks();
+      } else {
+        showToast(result.error || 'فشل الحذف', 'error');
+      }
+    } catch (e) {
+      showToast('خطأ في حذف الرابط', 'error');
+    }
+  }
+
+  async function clearActivity() {
+    if (!confirm('هل أنت متأكد من مسح جميع السجلات؟')) return;
+    
+    try {
+      const result = await ActivityAPI.clear();
+      if (result.success) {
+        showToast('تم مسح السجلات', 'success');
+        await loadActivityLogs();
+      } else {
+        showToast(result.error || 'فشل المسح', 'error');
+      }
+    } catch (e) {
+      showToast('خطأ في مسح السجلات', 'error');
+    }
+  }
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+
+  function logout() {
+    TokenManager.logout();
+  }
+
+  function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!TokenManager.isLoggedIn()) {
+      window.location.href = 'login.html';
+      return;
+    }
+    
+    if (!requireAdmin()) return;
+    
+    const user = TokenManager.getUser();
+    if (user) {
+      document.getElementById('userName').textContent = user.username;
+      document.getElementById('userRole').textContent = user.role.toUpperCase();
+      document.getElementById('userAvatar').textContent = user.username.charAt(0).toUpperCase();
+    }
+    
+    loadAdminData();
+  });
+</script>
+
+</body>
+</html>

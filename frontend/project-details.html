@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexHost V4 — تفاصيل المشروع</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/shared.css">
+<style>
+  .project-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+  }
+
+  .project-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .project-icon {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+  }
+
+  .project-title-section h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .project-title-section p {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .project-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+  }
+
+  .tab {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: var(--muted);
+    font-family: 'Cairo', sans-serif;
+    transition: all var(--transition-fast);
+  }
+
+  .tab:hover {
+    color: var(--text);
+    background: var(--surface2);
+  }
+
+  .tab.active {
+    color: var(--accent);
+    background: rgba(0,216,255,0.08);
+  }
+
+  .tab-content {
+    display: none;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  .code-editor {
+    background: #050810;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .code-filename {
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--text);
+  }
+
+  .code-textarea {
+    width: 100%;
+    min-height: 400px;
+    background: transparent;
+    border: none;
+    padding: 16px;
+    color: #a8b3cf;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    resize: vertical;
+    outline: none;
+  }
+
+  .env-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .env-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .env-row input {
+    flex: 1;
+  }
+
+  .env-row .btn-danger {
+    padding: 8px 12px;
+  }
+
+  .add-env-btn {
+    margin-top: 12px;
+    width: 100%;
+  }
+
+  .files-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
+  .file-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .file-item:hover {
+    border-color: var(--accent);
+  }
+
+  .file-item-icon {
+    font-size: 20px;
+  }
+
+  .file-item-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .file-item-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .file-item-meta {
+    font-size: 10px;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .file-item-delete {
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+    background: none;
+    border: none;
+    color: var(--red);
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .file-item:hover .file-item-delete {
+    opacity: 1;
+  }
+
+  .stats-grid-mini {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .stat-mini-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .stat-mini-value {
+    font-size: 24px;
+    font-weight: 900;
+    color: #fff;
+  }
+
+  .stat-mini-label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  @media (max-width: 768px) {
+    .project-header {
+      flex-direction: column;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .project-actions {
+      width: 100%;
+    }
+
+    .tabs {
+      overflow-x: auto;
+      flex-wrap: nowrap;
+    }
+
+    .env-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .stats-grid-mini {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .code-textarea {
+      min-height: 300px;
+    }
+  }
+</style>
+</head>
+<body class="page-transition">
+
+<!-- Broadcast Banner -->
+<div class="broadcast-banner" id="broadcastBanner">
+    <span id="broadcastIcon">📢</span>
+    <span id="broadcastMsg"></span>
+    <button onclick="document.getElementById('broadcastBanner').classList.remove('show')" 
+            style="margin-right:auto;background:none;border:none;color:inherit;cursor:pointer">×</button>
+</div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      <div>
+        <div class="logo-text">NexHost</div>
+        <div class="logo-sub">PANEL v4.0</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-section-label">MAIN</div>
+      <a href="hosting-panel.html" class="nav-item">
+        <span class="nav-icon">🏠</span> لوحة التحكم
+      </a>
+      <a href="hosting-panel.html" class="nav-item">
+        <span class="nav-icon">📦</span> مشاريعي
+      </a>
+      <a href="upload.html" class="nav-item">
+        <span class="nav-icon">📤</span> رفع مشروع
+      </a>
+
+      <div class="nav-section-label">الإدارة</div>
+      <a href="admin.html" class="nav-item admin-only" style="display:none">
+        <span class="nav-icon">👑</span> لوحة الأدمن
+      </a>
+      <a href="users.html" class="nav-item admin-only" style="display:none">
+        <span class="nav-icon">👥</span> المستخدمين
+      </a>
+      <a href="settings.html" class="nav-item">
+        <span class="nav-icon">🛠️</span> الإعدادات
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-card" onclick="logout()">
+        <div class="avatar" id="userAvatar">أ</div>
+        <div class="user-info">
+          <div class="user-name" id="userName">أحمد</div>
+          <div class="user-plan" id="userRole">ADMIN</div>
+        </div>
+        <span style="color:var(--muted)">↩</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MOBILE MENU BUTTON -->
+  <button class="mobile-menu-btn" onclick="toggleSidebar()" style="position:fixed;top:10px;right:10px;z-index:101">☰</button>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="topbar">
+      <div>
+        <div class="page-title">تفاصيل المشروع</div>
+        <div class="page-sub" id="projectSubtitle">-</div>
+      </div>
+      <div class="topbar-actions">
+        <a href="hosting-panel.html" class="btn btn-ghost">← رجوع</a>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- Project Header -->
+      <div class="project-header">
+        <div class="project-info">
+          <div class="project-icon">🐍</div>
+          <div class="project-title-section">
+            <h1 id="projectName">-</h1>
+            <p id="projectDesc">-</p>
+          </div>
+        </div>
+        <div class="project-actions">
+          <button class="btn btn-success" id="startBtn" onclick="startProject()">▶ تشغيل</button>
+          <button class="btn btn-danger" id="stopBtn" onclick="stopProject()">⏹ إيقاف</button>
+          <button class="btn btn-ghost" onclick="restartProject()">🔄 إعادة تشغيل</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid-mini">
+        <div class="stat-mini-card">
+          <div class="stat-mini-value" id="statStatus">⏹</div>
+          <div class="stat-mini-label">الحالة</div>
+        </div>
+        <div class="stat-mini-card">
+          <div class="stat-mini-value" id="statUptime">0s</div>
+          <div class="stat-mini-label">وقت التشغيل</div>
+        </div>
+        <div class="stat-mini-card">
+          <div class="stat-mini-value" id="statFiles">0</div>
+          <div class="stat-mini-label">الملفات</div>
+        </div>
+        <div class="stat-mini-card">
+          <div class="stat-mini-value" id="statSize">0MB</div>
+          <div class="stat-mini-label">الحجم</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('logs')">📋 Logs</button>
+        <button class="tab" onclick="switchTab('files')">📁 الملفات</button>
+        <button class="tab" onclick="switchTab('code')">💻 الكود</button>
+        <button class="tab" onclick="switchTab('env')">⚙️ .env</button>
+      </div>
+
+      <!-- Tab: Logs -->
+      <div class="tab-content active" id="tab-logs">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📋 سجلات التشغيل</div>
+            <div>
+              <button class="btn btn-ghost" style="font-size:11px;padding:5px 10px" onclick="clearLogs()">مسح</button>
+              <button class="btn btn-ghost" style="font-size:11px;padding:5px 10px" onclick="refreshLogs()">تحديث</button>
+            </div>
+          </div>
+          <div class="log-terminal" id="logTerminal" style="max-height:400px">
+            <div class="log-line">
+              <span class="log-time">--:--:--</span>
+              <span class="log-level-info">[INFO]</span>
+              <span class="log-msg">جاري تحميل السجلات...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Files -->
+      <div class="tab-content" id="tab-files">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📁 ملفات المشروع</div>
+            <button class="btn btn-primary" style="font-size:11px;padding:5px 12px" onclick="uploadFile()">+ رفع ملف</button>
+          </div>
+          <div class="card-body">
+            <div class="files-grid" id="filesGrid">
+              <div class="empty-state" style="grid-column:1/-1">
+                <div class="empty-state-icon">📂</div>
+                <div>جاري تحميل الملفات...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Code -->
+      <div class="tab-content" id="tab-code">
+        <div class="code-editor">
+          <div class="code-header">
+            <div class="code-filename" id="codeFilename">main.py</div>
+            <div>
+              <button class="btn btn-ghost" style="font-size:11px;padding:5px 10px" onclick="saveCode()">💾 حفظ</button>
+              <button class="btn btn-success" style="font-size:11px;padding:5px 10px" onclick="hotReload()">🔄 Hot Reload</button>
+            </div>
+          </div>
+          <textarea class="code-textarea" id="codeEditor" placeholder="# Your Python code here..."></textarea>
+        </div>
+      </div>
+
+      <!-- Tab: Env -->
+      <div class="tab-content" id="tab-env">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">⚙️ متغيرات البيئة (.env)</div>
+            <button class="btn btn-primary" style="font-size:11px;padding:5px 12px" onclick="saveEnv()">💾 حفظ</button>
+          </div>
+          <div class="card-body">
+            <div class="env-grid" id="envGrid">
+              <!-- Env vars will be loaded here -->
+            </div>
+            <button class="btn btn-ghost add-env-btn" onclick="addEnvRow()">+ إضافة متغير</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </main>
+</div>
+
+<!-- BOTTOM NAVIGATION (Mobile) -->
+<nav class="bottom-nav">
+  <a href="hosting-panel.html" class="bnav-item">
+    <span class="bni">🏠</span><span class="bnl">الرئيسية</span>
+  </a>
+  <a href="upload.html" class="bnav-item">
+    <span class="bni">📤</span><span class="bnl">رفع</span>
+  </a>
+  <a href="admin.html" class="bnav-item admin-only" style="display:none">
+    <span class="bni">👑</span><span class="bnl">الأدمن</span>
+  </a>
+  <a href="settings.html" class="bnav-item">
+    <span class="bni">🛠️</span><span class="bnl">إعدادات</span>
+  </a>
+  <a href="#" class="bnav-item" onclick="TokenManager.logout();return false;">
+    <span class="bni">↩</span><span class="bnl">خروج</span>
+  </a>
+</nav>
+
+<script src="assets/js/api.js"></script>
+<script src="assets/js/utils.js"></script>
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const projectId = urlParams.get('id');
+  const initialTab = urlParams.get('tab');
+  
+  let project = null;
+  let files = [];
+  let envVars = {};
+  let currentFile = 'main.py';
+  let logsInterval = null;
+
+  async function loadProject() {
+    if (!projectId) {
+      showToast('معرف المشروع غير موجود', 'error');
+      window.location.href = 'hosting-panel.html';
+      return;
+    }
+    
+    try {
+      const result = await ProjectsAPI.get(projectId);
+      if (!result.success) {
+        showToast(result.error || 'المشروع غير موجود', 'error');
+        window.location.href = 'hosting-panel.html';
+        return;
+      }
+      
+      project = result.project;
+      
+      // Update UI
+      document.getElementById('projectName').textContent = project.name;
+      document.getElementById('projectDesc').textContent = project.description || 'لا يوجد وصف';
+      document.getElementById('projectSubtitle').textContent = `ID: ${project.id} • ${project.language.toUpperCase()}`;
+      document.getElementById('codeFilename').textContent = project.main_file || 'main.py';
+      currentFile = project.main_file || 'main.py';
+      
+      updateStatus(project.status);
+      
+      // Load data
+      await loadFiles();
+      await loadEnv();
+      await loadCode();
+      await refreshLogs();
+      
+      // Start auto-refresh logs
+      logsInterval = setInterval(refreshLogs, 3000);
+      
+    } catch (error) {
+      console.error('Error loading project:', error);
+      showToast('خطأ في تحميل المشروع', 'error');
+    }
+  }
+
+  function updateStatus(status) {
+    const statusEl = document.getElementById('statStatus');
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    
+    if (status === 'running') {
+      statusEl.textContent = '🟢';
+      statusEl.style.color = 'var(--green)';
+      startBtn.style.display = 'none';
+      stopBtn.style.display = 'inline-flex';
+    } else {
+      statusEl.textContent = '⏹';
+      statusEl.style.color = 'var(--red)';
+      startBtn.style.display = 'inline-flex';
+      stopBtn.style.display = 'none';
+    }
+  }
+
+  async function loadFiles() {
+    try {
+      const result = await ProjectsAPI.getFiles(projectId);
+      if (result.success) {
+        files = result.files || [];
+        renderFiles();
+        document.getElementById('statFiles').textContent = files.length;
+      }
+    } catch (e) {}
+  }
+
+  function renderFiles() {
+    const grid = document.getElementById('filesGrid');
+    
+    if (files.length === 0) {
+      grid.innerHTML = `
+        <div class="empty-state" style="grid-column:1/-1">
+          <div class="empty-state-icon">📂</div>
+          <div>لا توجد ملفات</div>
+        </div>
+      `;
+      return;
+    }
+    
+    grid.innerHTML = files.map(f => `
+      <div class="file-item" onclick="openFile('${f.name}')">
+        <div class="file-item-icon">${f.is_dir ? '📁' : '📄'}</div>
+        <div class="file-item-info">
+          <div class="file-item-name">${f.name}</div>
+          <div class="file-item-meta">${f.is_dir ? 'مجلد' : FormatUtils.formatBytes(f.size || 0)}</div>
+        </div>
+        <button class="file-item-delete" onclick="event.stopPropagation();deleteFile('${f.name}')">🗑️</button>
+      </div>
+    `).join('');
+  }
+
+  async function loadEnv() {
+    try {
+      const result = await ProjectsAPI.getEnv(projectId);
+      if (result.success) {
+        envVars = result.env || {};
+        renderEnv();
+      }
+    } catch (e) {}
+  }
+
+  function renderEnv() {
+    const grid = document.getElementById('envGrid');
+    const entries = Object.entries(envVars);
+    
+    if (entries.length === 0) {
+      grid.innerHTML = '<div style="grid-column:1/-1;color:var(--muted);text-align:center;padding:20px">لا توجد متغيرات</div>';
+      return;
+    }
+    
+    grid.innerHTML = entries.map(([key, value], index) => `
+      <div class="env-row">
+        <input type="text" class="input env-key" placeholder="KEY" value="${escapeHtml(key)}">
+        <input type="text" class="input env-value" placeholder="VALUE" value="${escapeHtml(value)}">
+        <button class="btn btn-danger" onclick="removeEnvRow(this)">✕</button>
+      </div>
+    `).join('');
+  }
+
+  function addEnvRow() {
+    const grid = document.getElementById('envGrid');
+    const div = document.createElement('div');
+    div.className = 'env-row';
+    div.innerHTML = `
+      <input type="text" class="input env-key" placeholder="KEY">
+      <input type="text" class="input env-value" placeholder="VALUE">
+      <button class="btn btn-danger" onclick="removeEnvRow(this)">✕</button>
+    `;
+    grid.appendChild(div);
+  }
+
+  function removeEnvRow(btn) {
+    btn.closest('.env-row').remove();
+  }
+
+  async function saveEnv() {
+    const rows = document.querySelectorAll('.env-row');
+    const env = {};
+    
+    rows.forEach(row => {
+      const key = row.querySelector('.env-key').value.trim();
+      const value = row.querySelector('.env-value').value;
+      if (key) env[key] = value;
+    });
+    
+    try {
+      const result = await ProjectsAPI.updateEnv(projectId, env);
+      if (result.success) {
+        showToast('تم حفظ المتغيرات', 'success');
+      } else {
+        showToast(result.error || 'فشل الحفظ', 'error');
+      }
+    } catch (e) {
+      showToast('خطأ في حفظ المتغيرات', 'error');
+    }
+  }
+
+  async function loadCode() {
+    try {
+      const result = await ProjectsAPI.getFileContent(projectId, currentFile);
+      if (result.success) {
+        document.getElementById('codeEditor').value = result.content;
+      }
+    } catch (e) {
+      document.getElementById('codeEditor').value = '# Failed to load file';
+    }
+  }
+
+  async function saveCode() {
+    const content = document.getElementById('codeEditor').value;
+    
+    try {
+      const result = await ProjectsAPI.updateFile(projectId, currentFile, content);
+      if (result.success) {
+        showToast('تم حفظ الكود', 'success');
+      } else {
+        showToast(result.error || 'فشل الحفظ', 'error');
+      }
+    } catch (e) {
+      showToast('خطأ في حفظ الكود', 'error');
+    }
+  }
+
+  async function hotReload() {
+    const content = document.getElementById('codeEditor').value;
+    
+    // Create a blob from the content
+    const blob = new Blob([content], { type: 'text/plain' });
+    const file = new File([blob], currentFile, { type: 'text/plain' });
+    
+    try {
+      showToast('جاري Hot Reload...', 'info');
+      const result = await ProjectsAPI.hotReload(projectId, currentFile, file);
+      
+      if (result.success) {
+        showToast(result.message, 'success');
+        updateStatus(result.new_status);
+      } else {
+        showToast(result.error || 'فشل Hot Reload', 'error');
+      }
+    } catch (e) {
+      showToast('خطأ في Hot Reload', 'error');
+    }
+  }
+
+  async function refreshLogs() {
+    try {
+      const result = await ProjectsAPI.getLogs(projectId, 50);
+      if (result.success && result.logs) {
+        const terminal = document.getElementById('logTerminal');
+        terminal.innerHTML = result.logs.map(line => {
+          const timeMatch = line.match(/^\[(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})\]/);
+          const time = timeMatch ? timeMatch[1].split(' ')[1] : '--:--:--';
+          const msg = line.replace(/^\[.*?\]\s*/, '').trim();
+          
+          let levelClass = 'log-msg';
+          if (line.includes('ERROR') || line.includes('❌')) levelClass = 'log-level-err';
+          else if (line.includes('WARNING') || line.includes('⚠️')) levelClass = 'log-level-warn';
+          else if (line.includes('SUCCESS') || line.includes('✅')) levelClass = 'log-level-ok';
+          else if (line.includes('INFO') || line.includes('ℹ️')) levelClass = 'log-level-info';
+          
+          return `
+            <div class="log-line">
+              <span class="log-time">${time}</span>
+              <span class="${levelClass}">${escapeHtml(msg || line)}</span>
+            </div>
+          `;
+        }).join('');
+        
+        terminal.scrollTop = terminal.scrollHeight;
+      }
+    } catch (e) {}
+  }
+
+  function clearLogs() {
+    document.getElementById('logTerminal').innerHTML = `
+      <div class="log-line">
+        <span class="log-time">${new Date().toLocaleTimeString('ar-SA')}</span>
+        <span class="log-level-ok">[OK]</span>
+        <span class="log-msg bright">تم مسح السجلات ▌</span>
+      </div>
+    `;
+  }
+
+  async function startProject() {
+    try {
+      const result = await ProjectsAPI.start(projectId);
+      if (result.success) {
+        showToast('تم تشغيل المشروع', 'success');
+        updateStatus('running');
+      } else {
+        showToast(result.error || 'فشل التشغيل', 'error');
+      }
+    } catch (e) {
+      showToast('خطأ في تشغيل المشروع', 'error');
+    }
+  }
+
+  async function stopProject() {
+    try {
+      const result = await ProjectsAPI.stop(projectId);
+      if (result.success) {
+        showToast('تم إيقاف المشروع', 'success');
+        updateStatus('stopped');
+      } else {
+        showToast(result.error || 'فشل الإيقاف', 'error');
+      }
+    } catch (e) {
+      showToast('خطأ في إيقاف المشروع', 'error');
+    }
+  }
+
+  async function restartProject() {
+    try {
+      const result = await ProjectsAPI.restart(projectId);
+      if (result.success) {
+        showToast('تم إعادة تشغيل المشروع', 'success');
+        updateStatus('running');
+      } else {
+        showToast(result.error || 'فشل إعادة التشغيل', 'error');
+      }
+    } catch (e) {
+      showToast('خطأ في إعادة التشغيل', 'error');
+    }
+  }
+
+  function openFile(filename) {
+    currentFile = filename;
+    document.getElementById('codeFilename').textContent = filename;
+    loadCode();
+    switchTab('code');
+  }
+
+  async function deleteFile(filename) {
+    if (!confirm(`هل أنت متأكد من حذف "${filename}"؟`)) return;
+    
+    try {
+      const result = await ProjectsAPI.deleteFile(projectId, filename);
+      if (result.success) {
+        showToast('تم حذف الملف', 'success');
+        loadFiles();
+      } else {
+        showToast(result.error || 'فشل الحذف', 'error');
+      }
+    } catch (e) {
+      showToast('خطأ في حذف الملف', 'error');
+    }
+  }
+
+  function uploadFile() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.onchange = async (e) => {
+      if (e.target.files.length > 0) {
+        const formData = new FormData();
+        formData.append('file', e.target.files[0]);
+        
+        try {
+          const result = await API.uploadFile(`/projects/${projectId}/upload`, formData);
+          if (result.success) {
+            showToast('تم رفع الملف', 'success');
+            loadFiles();
+          } else {
+            showToast(result.error || 'فشل الرفع', 'error');
+          }
+        } catch (err) {
+          showToast('خطأ في رفع الملف', 'error');
+        }
+      }
+    };
+    input.click();
+  }
+
+  function switchTab(tab) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    
+    event.target.classList.add('active');
+    document.getElementById(`tab-${tab}`).classList.add('active');
+  }
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+
+  function logout() {
+    TokenManager.logout();
+  }
+
+  function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!TokenManager.isLoggedIn()) {
+      window.location.href = 'login.html';
+      return;
+    }
+    
+    const user = TokenManager.getUser();
+    if (user) {
+      document.getElementById('userName').textContent = user.username;
+      document.getElementById('userRole').textContent = user.role.toUpperCase();
+      document.getElementById('userAvatar').textContent = user.username.charAt(0).toUpperCase();
+      
+      if (['admin', 'superadmin'].includes(user.role)) {
+        document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
+      }
+    }
+    
+    // Switch to initial tab if specified
+    if (initialTab) {
+      const tabBtn = document.querySelector(`.tab[onclick="switchTab('${initialTab}')"]`);
+      if (tabBtn) tabBtn.click();
+    }
+    
+    loadProject();
+  });
+
+  // Cleanup
+  window.addEventListener('beforeunload', () => {
+    if (logsInterval) clearInterval(logsInterval);
+  });
+</script>
+
+</body>
+</html>

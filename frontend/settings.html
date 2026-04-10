@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexHost V4 — الإعدادات</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/shared.css">
+<style>
+  .settings-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .settings-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .settings-card.full-width {
+    grid-column: 1 / -1;
+  }
+
+  .settings-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .settings-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .settings-body {
+    padding: 20px;
+  }
+
+  .setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .setting-row:last-child {
+    border-bottom: none;
+  }
+
+  .setting-info {
+    flex: 1;
+  }
+
+  .setting-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .setting-desc {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .setting-control {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .backup-list {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .backup-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .backup-item:last-child {
+    border-bottom: none;
+  }
+
+  .backup-name {
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--text);
+  }
+
+  .backup-meta {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .superadmin-section {
+    background: linear-gradient(135deg, rgba(255,215,0,0.05), rgba(255,170,0,0.05));
+    border-color: rgba(255,215,0,0.2);
+  }
+
+  .superadmin-section .settings-header {
+    background: rgba(255,215,0,0.1);
+  }
+
+  .danger-zone {
+    background: rgba(255,68,102,0.05);
+    border-color: rgba(255,68,102,0.2);
+  }
+
+  .danger-zone .settings-header {
+    background: rgba(255,68,102,0.1);
+  }
+
+  @media (max-width: 768px) {
+    .settings-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body class="page-transition">
+
+<!-- Broadcast Banner -->
+<div class="broadcast-banner" id="broadcastBanner">
+    <span id="broadcastIcon">📢</span>
+    <span id="broadcastMsg"></span>
+    <button onclick="document.getElementById('broadcastBanner').classList.remove('show')" 
+            style="margin-right:auto;background:none;border:none;color:inherit;cursor:pointer">×</button>
+</div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      <div>
+        <div class="logo-text">NexHost</div>
+        <div class="logo-sub">PANEL v4.0</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-section-label">MAIN</div>
+      <a href="hosting-panel.html" class="nav-item">
+        <span class="nav-icon">🏠</span> لوحة التحكم
+      </a>
+      <a href="hosting-panel.html" class="nav-item">
+        <span class="nav-icon">📦</span> مشاريعي
+      </a>
+      <a href="upload.html" class="nav-item">
+        <span class="nav-icon">📤</span> رفع مشروع
+      </a>
+
+      <div class="nav-section-label">الإدارة</div>
+      <a href="admin.html" class="nav-item admin-only" style="display:none">
+        <span class="nav-icon">👑</span> لوحة الأدمن
+      </a>
+      <a href="users.html" class="nav-item admin-only" style="display:none">
+        <span class="nav-icon">👥</span> المستخدمين
+      </a>
+      <a href="settings.html" class="nav-item active">
+        <span class="nav-icon">🛠️</span> الإعدادات
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-card" onclick="logout()">
+        <div class="avatar" id="userAvatar">أ</div>
+        <div class="user-info">
+          <div class="user-name" id="userName">أحمد</div>
+          <div class="user-plan" id="userRole">ADMIN</div>
+        </div>
+        <span style="color:var(--muted)">↩</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MOBILE MENU BUTTON -->
+  <button class="mobile-menu-btn" onclick="toggleSidebar()" style="position:fixed;top:10px;right:10px;z-index:101">☰</button>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="topbar">
+      <div>
+        <div class="page-title">الإعدادات</div>
+        <div class="page-sub">تخصيص النظام والنسخ الاحتياطي</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-primary" onclick="saveSettings()">💾 حفظ التغييرات</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <div class="settings-grid">
+
+        <!-- General Settings -->
+        <div class="settings-card">
+          <div class="settings-header">
+            <div class="settings-title">⚙️ إعدادات عامة</div>
+          </div>
+          <div class="settings-body">
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-name">اسم اللوحة</div>
+                <div class="setting-desc">اسم يظهر في الترويسة</div>
+              </div>
+              <input type="text" class="input" style="width:180px" id="panelName" value="NexHost">
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-name">اللغة</div>
+                <div class="setting-desc">لغة واجهة المستخدم</div>
+              </div>
+              <select class="select" style="width:180px" id="language">
+                <option value="ar" selected>العربية</option>
+                <option value="en">English</option>
+              </select>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-name">المنطقة الزمنية</div>
+                <div class="setting-desc">الوقت المحلي</div>
+              </div>
+              <select class="select" style="width:180px" id="timezone">
+                <option value="Asia/Riyadh" selected>الرياض (UTC+3)</option>
+                <option value="Africa/Cairo">القاهرة (UTC+2)</option>
+                <option value="UTC">UTC</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Security Settings -->
+        <div class="settings-card">
+          <div class="settings-header">
+            <div class="settings-title">🔒 الأمان</div>
+          </div>
+          <div class="settings-body">
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-name">تسجيل محاولات الدخول</div>
+                <div class="setting-desc">تسجيل جميع محاولات تسجيل الدخول</div>
+              </div>
+              <div class="toggle on" id="logLoginToggle" onclick="toggleSetting(this)"></div>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-name">قفل بعد محاولات فاشلة</div>
+                <div class="setting-desc">قفل الحساب بعد عدة محاولات</div>
+              </div>
+              <div class="toggle on" id="lockToggle" onclick="toggleSetting(this)"></div>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-name">الحد الأقصى للمحاولات</div>
+                <div class="setting-desc">عدد المحاولات قبل القفل</div>
+              </div>
+              <input type="number" class="input" style="width:80px" id="maxAttempts" value="5" min="3" max="10">
+            </div>
+          </div>
+        </div>
+
+        <!-- Maintenance Mode (Admin Only) -->
+        <div class="settings-card full-width danger-zone admin-only" id="maintenanceCard" style="display:none">
+          <div class="settings-header">
+            <div class="settings-title">🔧 وضع الصيانة</div>
+            <span class="badge badge-off" id="maintenanceStatus">غير مفعل</span>
+          </div>
+          <div class="settings-body">
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-name">تفعيل وضع الصيانة</div>
+                <div class="setting-desc">يمنع المستخدمين من الوصول للنظام (ما عدا الأدمن)</div>
+              </div>
+              <div class="toggle" id="maintenanceToggle" onclick="toggleMaintenanceMode()"></div>
+            </div>
+            <div class="field" style="margin-top:12px">
+              <label>رسالة الصيانة</label>
+              <textarea class="textarea" id="maintenanceMessage" rows="2">النظام تحت الصيانة، سيعود قريباً 🔧</textarea>
+            </div>
+            <div class="field" style="margin-top:12px">
+              <label>وقت انتهاء الصيانة (اختياري)</label>
+              <input type="datetime-local" class="input" id="maintenanceEndTime">
+            </div>
+          </div>
+        </div>
+
+        <!-- Super Admin Settings -->
+        <div class="settings-card superadmin-section superadmin-only" id="superadminCard" style="display:none">
+          <div class="settings-header">
+            <div class="settings-title">👑 إعدادات Super Admin</div>
+          </div>
+          <div class="settings-body">
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-name">تغيير كلمة مرور Super Admin</div>
+                <div class="setting-desc">تغيير كلمة المرور الافتراضية</div>
+              </div>
+              <button class="btn btn-primary" onclick="showChangePasswordModal()">تغيير</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Backup -->
+        <div class="settings-card full-width">
+          <div class="settings-header">
+            <div class="settings-title">💾 النسخ الاحتياطي</div>
+            <button class="btn btn-primary" onclick="createBackup()">+ نسخة جديدة</button>
+          </div>
+          <div class="settings-body">
+            <div class="backup-list" id="backupList">
+              <div class="backup-item">
+                <div>
+                  <div class="backup-name">جاري تحميل النسخ...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div><!-- /content -->
+  </main>
+</div>
+
+<!-- BOTTOM NAVIGATION (Mobile) -->
+<nav class="bottom-nav">
+  <a href="hosting-panel.html" class="bnav-item">
+    <span class="bni">🏠</span><span class="bnl">الرئيسية</span>
+  </a>
+  <a href="upload.html" class="bnav-item">
+    <span class="bni">📤</span><span class="bnl">رفع</span>
+  </a>
+  <a href="admin.html" class="bnav-item admin-only" style="display:none">
+    <span class="bni">👑</span><span class="bnl">الأدمن</span>
+  </a>
+  <a href="settings.html" class="bnav-item active">
+    <span class="bni">🛠️</span><span class="bnl">إعدادات</span>
+  </a>
+  <a href="#" class="bnav-item" onclick="TokenManager.logout();return false;">
+    <span class="bni">↩</span><span class="bnl">خروج</span>
+  </a>
+</nav>
+
+<!-- Change Password Modal -->
+<div class="modal-overlay" id="passwordModal">
+  <div class="modal">
+    <div class="modal-title">🔒 تغيير كلمة المرور</div>
+    <div class="modal-sub">أدخل كلمة المرور الحالية والجديدة</div>
+    
+    <div class="field">
+      <label>كلمة المرور الحالية</label>
+      <input type="password" class="input" id="currentPassword" placeholder="********">
+    </div>
+    
+    <div class="field">
+      <label>كلمة المرور الجديدة</label>
+      <input type="password" class="input" id="newPassword" placeholder="********">
+    </div>
+    
+    <div class="field">
+      <label>تأكيد كلمة المرور</label>
+      <input type="password" class="input" id="confirmPassword" placeholder="********">
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('passwordModal').classList.remove('open')">إلغاء</button>
+      <button class="btn btn-primary" onclick="changeSuperAdminPassword()">تغيير</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/api.js"></script>
+<script src="assets/js/utils.js"></script>
+<script>
+  let maintenanceEnabled = false;
+
+  async function loadSettings() {
+    try {
+      const result = await SettingsAPI.getAll();
+      if (result.success && result.settings) {
+        const s = result.settings;
+        document.getElementById('panelName').value = s.panel_name || 'NexHost';
+        document.getElementById('language').value = s.language || 'ar';
+        document.getElementById('timezone').value = s.timezone || 'Asia/Riyadh';
+        document.getElementById('maxAttempts').value = s.max_failed_attempts || '5';
+      }
+      
+      await loadMaintenanceStatus();
+      await loadBackups();
+    } catch (error) {
+      console.error('Error loading settings:', error);
+    }
+  }
+
+  async function loadMaintenanceStatus() {
+    try {
+      const result = await AdminAPI.getMaintenanceStatus();
+      maintenanceEnabled = result.maintenance;
+      
+      const toggle = document.getElementById('maintenanceToggle');
+      const status = document.getElementById('maintenanceStatus');
+      const msgInput = document.getElementById('maintenanceMessage');
+      const endTimeInput = document.getElementById('maintenanceEndTime');
+      
+      if (maintenanceEnabled) {
+        toggle.classList.add('on');
+        status.textContent = 'مفعل';
+        status.className = 'badge badge-on';
+      } else {
+        toggle.classList.remove('on');
+        status.textContent = 'غير مفعل';
+        status.className = 'badge badge-off';
+      }
+      
+      if (result.message) msgInput.value = result.message;
+      if (result.end_time) endTimeInput.value = result.end_time.slice(0, 16);
+    } catch (e) {}
+  }
+
+  async function loadBackups() {
+    try {
+      const result = await SettingsAPI.getBackups();
+      const list = document.getElementById('backupList');
+      
+      if (result.success && result.backups && result.backups.length > 0) {
+        list.innerHTML = result.backups.map(b => `
+          <div class="backup-item">
+            <div>
+              <div class="backup-name">${b.name}</div>
+              <div class="backup-meta">${FormatUtils.formatDate(b.created_at)} • ${b.size_formatted}</div>
+            </div>
+            <button class="btn btn-danger" style="font-size:11px;padding:5px 10px" 
+                    onclick="deleteBackup('${b.name}')">🗑️</button>
+          </div>
+        `).join('');
+      } else {
+        list.innerHTML = '<div class="backup-item"><div class="backup-name">لا توجد نسخ احتياطية</div></div>';
+      }
+    } catch (e) {
+      document.getElementById('backupList').innerHTML = '<div class="backup-item"><div class="backup-name">خطأ في تحميل النسخ</div></div>';
+    }
+  }
+
+  function toggleSetting(el) {
+    el.classList.toggle('on');
+  }
+
+  async function toggleMaintenanceMode() {
+    const toggle = document.getElementById('maintenanceToggle');
+    const enabled = !toggle.classList.contains('on');
+    const message = document.getElementById('maintenanceMessage').value;
+    const endTime = document.getElementById('maintenanceEndTime').value;
+    
+    try {
+      const result = await AdminAPI.toggleMaintenance(enabled, message, endTime);
+      if (result.success) {
+        showToast(result.message, 'success');
+        await loadMaintenanceStatus();
+      } else {
+        showToast(result.error || 'فشل تغيير وضع الصيانة', 'error');
+      }
+    } catch (e) {
+      showToast('خطأ في تغيير وضع الصيانة', 'error');
+    }
+  }
+
+  async function createBackup() {
+    try {
+      const result = await SettingsAPI.createBackup();
+      if (result.success) {
+        showToast('تم إنشاء نسخة احتياطية', 'success');
+        await loadBackups();
+      } else {
+        showToast(result.error || 'فشل إنشاء النسخة', 'error');
+      }
+    } catch (e) {
+      showToast('خطأ في إنشاء النسخة', 'error');
+    }
+  }
+
+  async function deleteBackup(name) {
+    if (!confirm('هل أنت متأكد من حذف هذه النسخة؟')) return;
+    
+    try {
+      const result = await API.delete(`/settings/backups/${encodeURIComponent(name)}`);
+      if (result.success) {
+        showToast('تم حذف النسخة', 'success');
+        await loadBackups();
+      } else {
+        showToast(result.error || 'فشل الحذف', 'error');
+      }
+    } catch (e) {
+      showToast('خطأ في حذف النسخة', 'error');
+    }
+  }
+
+  async function saveSettings() {
+    const settings = {
+      panel_name: document.getElementById('panelName').value,
+      language: document.getElementById('language').value,
+      timezone: document.getElementById('timezone').value,
+      max_failed_attempts: document.getElementById('maxAttempts').value
+    };
+    
+    try {
+      const result = await SettingsAPI.update(settings);
+      if (result.success) {
+        showToast('تم حفظ الإعدادات', 'success');
+      } else {
+        showToast(result.error || 'فشل الحفظ', 'error');
+      }
+    } catch (e) {
+      showToast('خطأ في حفظ الإعدادات', 'error');
+    }
+  }
+
+  function showChangePasswordModal() {
+    document.getElementById('passwordModal').classList.add('open');
+  }
+
+  async function changeSuperAdminPassword() {
+    const current = document.getElementById('currentPassword').value;
+    const newPass = document.getElementById('newPassword').value;
+    const confirm = document.getElementById('confirmPassword').value;
+    
+    if (!current || !newPass) {
+      showToast('يرجى ملء جميع الحقول', 'error');
+      return;
+    }
+    
+    if (newPass !== confirm) {
+      showToast('كلمتا المرور غير متطابقتين', 'error');
+      return;
+    }
+    
+    try {
+      const result = await AuthAPI.changeSuperAdminPassword(current, newPass);
+      if (result.success) {
+        showToast('تم تغيير كلمة المرور', 'success');
+        document.getElementById('passwordModal').classList.remove('open');
+        document.getElementById('currentPassword').value = '';
+        document.getElementById('newPassword').value = '';
+        document.getElementById('confirmPassword').value = '';
+      } else {
+        showToast(result.error || 'فشل تغيير كلمة المرور', 'error');
+      }
+    } catch (e) {
+      showToast('خطأ في تغيير كلمة المرور', 'error');
+    }
+  }
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+
+  function logout() {
+    TokenManager.logout();
+  }
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!TokenManager.isLoggedIn()) {
+      window.location.href = 'login.html';
+      return;
+    }
+    
+    const user = TokenManager.getUser();
+    if (user) {
+      document.getElementById('userName').textContent = user.username;
+      document.getElementById('userRole').textContent = user.role.toUpperCase();
+      document.getElementById('userAvatar').textContent = user.username.charAt(0).toUpperCase();
+      
+      // Show admin options
+      if (['admin', 'superadmin'].includes(user.role)) {
+        document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
+        document.getElementById('maintenanceCard').style.display = 'block';
+      }
+      
+      // Show superadmin options
+      if (user.role === 'superadmin') {
+        document.querySelectorAll('.superadmin-only').forEach(el => el.style.display = 'block');
+        document.getElementById('superadminCard').style.display = 'block';
+      }
+    }
+    
+    loadSettings();
+  });
+</script>
+
+</body>
+</html>

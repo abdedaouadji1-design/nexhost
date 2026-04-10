@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexHost V4 — المستخدمين</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/shared.css">
+<style>
+  .users-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .users-grid {
+    display: grid;
+    gap: 12px;
+  }
+
+  .user-card-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all var(--transition-fast);
+  }
+
+  .user-card-item:hover {
+    border-color: rgba(0,216,255,0.25);
+  }
+
+  .user-avatar-lg {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .user-avatar-lg.admin {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+  }
+
+  .user-avatar-lg.user {
+    background: linear-gradient(135deg, var(--green), #00cc66);
+  }
+
+  .user-avatar-lg.viewer {
+    background: linear-gradient(135deg, var(--muted), #3a4a5a);
+  }
+
+  .user-info-lg {
+    flex: 1;
+  }
+
+  .user-name-lg {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .user-meta-lg {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .user-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .status-active {
+    background: rgba(0,255,136,0.1);
+    color: var(--green);
+    border: 1px solid rgba(0,255,136,0.2);
+  }
+
+  .status-inactive {
+    background: rgba(255,68,102,0.1);
+    color: var(--red);
+    border: 1px solid rgba(255,68,102,0.2);
+  }
+
+  .superadmin-badge {
+    background: linear-gradient(135deg, #ffd700, #ffaa00);
+    color: #000;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+
+  .role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .role-admin {
+    background: rgba(0,216,255,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(0,216,255,0.2);
+  }
+
+  .role-user {
+    background: rgba(0,255,136,0.1);
+    color: var(--green);
+    border: 1px solid rgba(0,255,136,0.2);
+  }
+
+  .role-viewer {
+    background: rgba(124,58,237,0.1);
+    color: #a78bfa;
+    border: 1px solid rgba(124,58,237,0.2);
+  }
+
+  @media (max-width: 768px) {
+    .user-card-item {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .user-actions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
+</style>
+</head>
+<body class="page-transition">
+
+<!-- Broadcast Banner -->
+<div class="broadcast-banner" id="broadcastBanner">
+    <span id="broadcastIcon">📢</span>
+    <span id="broadcastMsg"></span>
+    <button onclick="document.getElementById('broadcastBanner').classList.remove('show')" 
+            style="margin-right:auto;background:none;border:none;color:inherit;cursor:pointer">×</button>
+</div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      <div>
+        <div class="logo-text">NexHost</div>
+        <div class="logo-sub">PANEL v4.0</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-section-label">MAIN</div>
+      <a href="hosting-panel.html" class="nav-item">
+        <span class="nav-icon">🏠</span> لوحة التحكم
+      </a>
+      <a href="hosting-panel.html" class="nav-item">
+        <span class="nav-icon">📦</span> مشاريعي
+      </a>
+      <a href="upload.html" class="nav-item">
+        <span class="nav-icon">📤</span> رفع مشروع
+      </a>
+
+      <div class="nav-section-label">الإدارة</div>
+      <a href="admin.html" class="nav-item admin-only" style="display:none">
+        <span class="nav-icon">👑</span> لوحة الأدمن
+      </a>
+      <a href="users.html" class="nav-item active admin-only" style="display:none">
+        <span class="nav-icon">👥</span> المستخدمين
+      </a>
+      <a href="settings.html" class="nav-item">
+        <span class="nav-icon">🛠️</span> الإعدادات
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-card" onclick="logout()">
+        <div class="avatar" id="userAvatar">أ</div>
+        <div class="user-info">
+          <div class="user-name" id="userName">أحمد</div>
+          <div class="user-plan" id="userRole">ADMIN</div>
+        </div>
+        <span style="color:var(--muted)">↩</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MOBILE MENU BUTTON -->
+  <button class="mobile-menu-btn" onclick="toggleSidebar()" style="position:fixed;top:10px;right:10px;z-index:101">☰</button>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="topbar">
+      <div>
+        <div class="page-title">المستخدمين</div>
+        <div class="page-sub">إدارة المستخدمين والصلاحيات</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-primary" onclick="showAddUserModal()">+ مستخدم جديد</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <div class="users-header">
+        <div class="section-title">👥 قائمة المستخدمين</div>
+        <div style="font-size:12px;color:var(--muted)" id="usersCount">0 مستخدم</div>
+      </div>
+
+      <div class="users-grid" id="usersGrid">
+        <!-- Users will be loaded here -->
+        <div class="empty-state">
+          <div class="empty-state-icon">👤</div>
+          <div>جاري تحميل المستخدمين...</div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </main>
+</div>
+
+<!-- BOTTOM NAVIGATION (Mobile) -->
+<nav class="bottom-nav">
+  <a href="hosting-panel.html" class="bnav-item">
+    <span class="bni">🏠</span><span class="bnl">الرئيسية</span>
+  </a>
+  <a href="upload.html" class="bnav-item">
+    <span class="bni">📤</span><span class="bnl">رفع</span>
+  </a>
+  <a href="admin.html" class="bnav-item admin-only" style="display:none">
+    <span class="bni">👑</span><span class="bnl">الأدمن</span>
+  </a>
+  <a href="settings.html" class="bnav-item">
+    <span class="bni">🛠️</span><span class="bnl">إعدادات</span>
+  </a>
+  <a href="#" class="bnav-item" onclick="TokenManager.logout();return false;">
+    <span class="bni">↩</span><span class="bnl">خروج</span>
+  </a>
+</nav>
+
+<!-- Add User Modal -->
+<div class="modal-overlay" id="addUserModal">
+  <div class="modal">
+    <div class="modal-title">➕ إضافة مستخدم جديد</div>
+    <div class="modal-sub">أدخل بيانات المستخدم الجديد</div>
+    
+    <div class="field">
+      <label>👤 اسم المستخدم</label>
+      <input type="text" class="input" id="newUsername" placeholder="اسم المستخدم">
+    </div>
+    
+    <div class="field">
+      <label>📧 البريد الإلكتروني</label>
+      <input type="email" class="input" id="newEmail" placeholder="email@example.com">
+    </div>
+    
+    <div class="field">
+      <label>🔒 كلمة المرور</label>
+      <input type="password" class="input" id="newPassword" placeholder="********">
+    </div>
+    
+    <div class="field">
+      <label>🎭 الدور</label>
+      <select class="select" id="newRole">
+        <option value="user">User - مستخدم عادي</option>
+        <option value="admin">Admin - مشرف</option>
+        <option value="viewer">Viewer - مشاهد فقط</option>
+      </select>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('addUserModal').classList.remove('open')">إلغاء</button>
+      <button class="btn btn-primary" onclick="addUser()">إضافة</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/api.js"></script>
+<script src="assets/js/utils.js"></script>
+<script>
+  let users = [];
+
+  async function loadUsers() {
+    try {
+      const result = await UsersAPI.getAll();
+      if (result.success) {
+        users = result.users || [];
+        renderUsers();
+      } else {
+        showToast(result.error || 'فشل تحميل المستخدمين', 'error');
+      }
+    } catch (error) {
+      console.error('Error loading users:', error);
+      showToast('خطأ في تحميل المستخدمين', 'error');
+    }
+  }
+
+  function renderUsers() {
+    const grid = document.getElementById('usersGrid');
+    document.getElementById('usersCount').textContent = `${users.length} مستخدم`;
+    
+    if (users.length === 0) {
+      grid.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">👤</div>
+          <div>لا يوجد مستخدمين</div>
+        </div>
+      `;
+      return;
+    }
+
+    grid.innerHTML = users.map(user => `
+      <div class="user-card-item">
+        <div class="user-avatar-lg ${user.role}">
+          ${user.username.charAt(0).toUpperCase()}
+        </div>
+        <div class="user-info-lg">
+          <div class="user-name-lg">
+            ${escapeHtml(user.username)}
+            ${user.role === 'superadmin' ? '<span class="superadmin-badge">👑 SUPER ADMIN</span>' : ''}
+            <span class="role-badge role-${user.role}">${user.role.toUpperCase()}</span>
+          </div>
+          <div class="user-meta-lg">
+            📧 ${user.email || 'لا يوجد بريد'} • 
+            📁 ${user.project_count || 0} مشاريع • 
+            🕒 ${user.last_login_formatted || 'لم يسبق له الدخول'}
+          </div>
+        </div>
+        <div class="user-actions">
+          ${user.role !== 'superadmin' ? `
+            <button class="btn btn-ghost" style="font-size:11px;padding:6px 12px" 
+                    onclick="toggleUserStatus(${user.id}, ${user.is_active})">
+              ${user.is_active ? '🔴 تعطيل' : '🟢 تفعيل'}
+            </button>
+            <button class="btn btn-danger" style="font-size:11px;padding:6px 12px" 
+                    onclick="deleteUser(${user.id}, '${user.username}')">
+              🗑️ حذف
+            </button>
+          ` : '<span style="color:var(--muted);font-size:12px">محمي</span>'}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function toggleUserStatus(userId, currentStatus) {
+    if (!confirm(`هل أنت متأكد من ${currentStatus ? 'تعطيل' : 'تفعيل'} هذا المستخدم؟`)) return;
+    
+    try {
+      const result = await UsersAPI.toggleStatus(userId);
+      if (result.success) {
+        showToast(result.message, 'success');
+        loadUsers();
+      } else {
+        showToast(result.error || 'فشل تحديث الحالة', 'error');
+      }
+    } catch (error) {
+      showToast('خطأ في تحديث الحالة', 'error');
+    }
+  }
+
+  async function deleteUser(userId, username) {
+    if (!confirm(`هل أنت متأكد من حذف المستخدم "${username}"؟\nسيتم حذف جميع مشاريعه أيضاً!`)) return;
+    
+    try {
+      const result = await UsersAPI.delete(userId);
+      if (result.success) {
+        showToast(result.message, 'success');
+        loadUsers();
+      } else {
+        showToast(result.error || 'فشل حذف المستخدم', 'error');
+      }
+    } catch (error) {
+      showToast('خطأ في حذف المستخدم', 'error');
+    }
+  }
+
+  function showAddUserModal() {
+    document.getElementById('addUserModal').classList.add('open');
+  }
+
+  async function addUser() {
+    const username = document.getElementById('newUsername').value.trim();
+    const email = document.getElementById('newEmail').value.trim();
+    const password = document.getElementById('newPassword').value;
+    const role = document.getElementById('newRole').value;
+    
+    if (!username || !password) {
+      showToast('يرجى إدخال اسم المستخدم وكلمة المرور', 'error');
+      return;
+    }
+    
+    try {
+      const result = await UsersAPI.create({ username, email, password, role });
+      if (result.success) {
+        showToast(result.message, 'success');
+        document.getElementById('addUserModal').classList.remove('open');
+        document.getElementById('newUsername').value = '';
+        document.getElementById('newEmail').value = '';
+        document.getElementById('newPassword').value = '';
+        loadUsers();
+      } else {
+        showToast(result.error || 'فشل إضافة المستخدم', 'error');
+      }
+    } catch (error) {
+      showToast('خطأ في إضافة المستخدم', 'error');
+    }
+  }
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+
+  function logout() {
+    TokenManager.logout();
+  }
+
+  function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!TokenManager.isLoggedIn()) {
+      window.location.href = 'login.html';
+      return;
+    }
+    
+    if (!requireAdmin()) return;
+    
+    const user = TokenManager.getUser();
+    if (user) {
+      document.getElementById('userName').textContent = user.username;
+      document.getElementById('userRole').textContent = user.role.toUpperCase();
+      document.getElementById('userAvatar').textContent = user.username.charAt(0).toUpperCase();
+    }
+    
+    loadUsers();
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexHost V4 — رفع مشروع</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/shared.css">
+<style>
+  .upload-container {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .upload-zone-large {
+    background: var(--surface);
+    border: 2px dashed var(--border);
+    border-radius: 20px;
+    padding: 60px 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .upload-zone-large:hover {
+    border-color: var(--accent);
+    background: rgba(0,216,255,0.03);
+  }
+
+  .upload-zone-large.dragover {
+    border-color: var(--accent);
+    background: rgba(0,216,255,0.08);
+    transform: scale(1.02);
+  }
+
+  .upload-icon-lg {
+    font-size: 64px;
+    margin-bottom: 20px;
+    animation: bounce 2s infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .upload-title-lg {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+
+  .upload-sub-lg {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .upload-tags {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .upload-tag-lg {
+    padding: 6px 14px;
+    background: rgba(0,216,255,0.08);
+    border: 1px solid rgba(0,216,255,0.15);
+    border-radius: 20px;
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--accent);
+  }
+
+  .project-form {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-top: 20px;
+  }
+
+  .form-section-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .file-preview {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .file-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(0,216,255,0.1);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+  }
+
+  .file-info {
+    flex: 1;
+  }
+
+  .file-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    word-break: break-all;
+  }
+
+  .file-size {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .file-remove {
+    background: none;
+    border: none;
+    color: var(--red);
+    cursor: pointer;
+    font-size: 18px;
+    padding: 8px;
+  }
+
+  .progress-bar {
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 12px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  .upload-status {
+    text-align: center;
+    padding: 20px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  @media (max-width: 768px) {
+    .upload-zone-large {
+      padding: 40px 20px;
+    }
+
+    .upload-icon-lg {
+      font-size: 48px;
+    }
+
+    .upload-title-lg {
+      font-size: 16px;
+    }
+  }
+</style>
+</head>
+<body class="page-transition">
+
+<!-- Broadcast Banner -->
+<div class="broadcast-banner" id="broadcastBanner">
+    <span id="broadcastIcon">📢</span>
+    <span id="broadcastMsg"></span>
+    <button onclick="document.getElementById('broadcastBanner').classList.remove('show')" 
+            style="margin-right:auto;background:none;border:none;color:inherit;cursor:pointer">×</button>
+</div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      <div>
+        <div class="logo-text">NexHost</div>
+        <div class="logo-sub">PANEL v4.0</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-section-label">MAIN</div>
+      <a href="hosting-panel.html" class="nav-item">
+        <span class="nav-icon">🏠</span> لوحة التحكم
+      </a>
+      <a href="hosting-panel.html" class="nav-item">
+        <span class="nav-icon">📦</span> مشاريعي
+      </a>
+      <a href="upload.html" class="nav-item active">
+        <span class="nav-icon">📤</span> رفع مشروع
+      </a>
+
+      <div class="nav-section-label">الإدارة</div>
+      <a href="admin.html" class="nav-item admin-only" style="display:none">
+        <span class="nav-icon">👑</span> لوحة الأدمن
+      </a>
+      <a href="users.html" class="nav-item admin-only" style="display:none">
+        <span class="nav-icon">👥</span> المستخدمين
+      </a>
+      <a href="settings.html" class="nav-item">
+        <span class="nav-icon">🛠️</span> الإعدادات
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-card" onclick="logout()">
+        <div class="avatar" id="userAvatar">أ</div>
+        <div class="user-info">
+          <div class="user-name" id="userName">أحمد</div>
+          <div class="user-plan" id="userRole">ADMIN</div>
+        </div>
+        <span style="color:var(--muted)">↩</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MOBILE MENU BUTTON -->
+  <button class="mobile-menu-btn" onclick="toggleSidebar()" style="position:fixed;top:10px;right:10px;z-index:101">☰</button>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="topbar">
+      <div>
+        <div class="page-title">رفع مشروع جديد</div>
+        <div class="page-sub">ارفع بوتك أو سكريبتك Python</div>
+      </div>
+      <div class="topbar-actions">
+        <a href="hosting-panel.html" class="btn btn-ghost">← رجوع</a>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <div class="upload-container">
+
+        <!-- Upload Zone -->
+        <div class="upload-zone-large" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+          <div class="upload-icon-lg">📂</div>
+          <div class="upload-title-lg">اسحب ملفاتك هنا</div>
+          <div class="upload-sub-lg">أو اضغط للاختيار من جهازك</div>
+          <div class="upload-tags">
+            <span class="upload-tag-lg">.py</span>
+            <span class="upload-tag-lg">.zip</span>
+            <span class="upload-tag-lg">requirements.txt</span>
+          </div>
+        </div>
+
+        <input type="file" id="fileInput" style="display:none" accept=".py,.zip,.txt" multiple>
+
+        <!-- File Preview (hidden initially) -->
+        <div class="file-preview" id="filePreview" style="display:none">
+          <div class="file-icon">📄</div>
+          <div class="file-info">
+            <div class="file-name" id="fileName">-</div>
+            <div class="file-size" id="fileSize">-</div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+          </div>
+          <button class="file-remove" onclick="removeFile()">✕</button>
+        </div>
+
+        <!-- Project Form -->
+        <div class="project-form" id="projectForm" style="display:none">
+          <div class="form-section-title">📝 معلومات المشروع</div>
+          
+          <div class="field">
+            <label>اسم المشروع *</label>
+            <input type="text" class="input" id="projectName" placeholder="مثال: my-bot">
+          </div>
+
+          <div class="field">
+            <label>الوصف</label>
+            <textarea class="textarea" id="projectDesc" rows="2" placeholder="وصف مختصر للمشروع..."></textarea>
+          </div>
+
+          <div class="field">
+            <label>الملف الرئيسي *</label>
+            <input type="text" class="input" id="mainFile" value="main.py" placeholder="main.py">
+          </div>
+
+          <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="uploadProject()">
+            🚀 رفع وإنشاء المشروع
+          </button>
+        </div>
+
+        <!-- Upload Status -->
+        <div class="upload-status" id="uploadStatus" style="display:none">
+          <div class="spinner" style="margin:0 auto 12px"></div>
+          <div>جاري رفع الملف...</div>
+        </div>
+
+      </div>
+
+    </div><!-- /content -->
+  </main>
+</div>
+
+<!-- BOTTOM NAVIGATION (Mobile) -->
+<nav class="bottom-nav">
+  <a href="hosting-panel.html" class="bnav-item">
+    <span class="bni">🏠</span><span class="bnl">الرئيسية</span>
+  </a>
+  <a href="upload.html" class="bnav-item active">
+    <span class="bni">📤</span><span class="bnl">رفع</span>
+  </a>
+  <a href="admin.html" class="bnav-item admin-only" style="display:none">
+    <span class="bni">👑</span><span class="bnl">الأدمن</span>
+  </a>
+  <a href="settings.html" class="bnav-item">
+    <span class="bni">🛠️</span><span class="bnl">إعدادات</span>
+  </a>
+  <a href="#" class="bnav-item" onclick="TokenManager.logout();return false;">
+    <span class="bni">↩</span><span class="bnl">خروج</span>
+  </a>
+</nav>
+
+<script src="assets/js/api.js"></script>
+<script src="assets/js/utils.js"></script>
+<script>
+  let selectedFile = null;
+  let createdProjectId = null;
+
+  // Drag and drop
+  const uploadZone = document.getElementById('uploadZone');
+
+  uploadZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadZone.classList.add('dragover');
+  });
+
+  uploadZone.addEventListener('dragleave', () => {
+    uploadZone.classList.remove('dragover');
+  });
+
+  uploadZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadZone.classList.remove('dragover');
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      handleFileSelect(files[0]);
+    }
+  });
+
+  document.getElementById('fileInput').addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+      handleFileSelect(e.target.files[0]);
+    }
+  });
+
+  function handleFileSelect(file) {
+    const allowedTypes = ['.py', '.zip', '.txt'];
+    const ext = '.' + file.name.split('.').pop().toLowerCase();
+    
+    if (!allowedTypes.includes(ext)) {
+      showToast('نوع الملف غير مدعوم. استخدم .py أو .zip أو .txt', 'error');
+      return;
+    }
+    
+    selectedFile = file;
+    
+    // Show preview
+    document.getElementById('fileName').textContent = file.name;
+    document.getElementById('fileSize').textContent = FormatUtils.formatBytes(file.size);
+    document.getElementById('filePreview').style.display = 'flex';
+    document.getElementById('projectForm').style.display = 'block';
+    
+    // Auto-fill project name from file
+    const nameWithoutExt = file.name.replace(/\.[^/.]+$/, '');
+    document.getElementById('projectName').value = nameWithoutExt;
+  }
+
+  function removeFile() {
+    selectedFile = null;
+    document.getElementById('filePreview').style.display = 'none';
+    document.getElementById('projectForm').style.display = 'none';
+    document.getElementById('fileInput').value = '';
+  }
+
+  async function uploadProject() {
+    const name = document.getElementById('projectName').value.trim();
+    const desc = document.getElementById('projectDesc').value.trim();
+    const mainFile = document.getElementById('mainFile').value.trim();
+    
+    if (!name) {
+      showToast('يرجى إدخال اسم المشروع', 'error');
+      return;
+    }
+    
+    if (!mainFile) {
+      showToast('يرجى إدخال اسم الملف الرئيسي', 'error');
+      return;
+    }
+    
+    if (!selectedFile) {
+      showToast('يرجى اختيار ملف', 'error');
+      return;
+    }
+    
+    // Show loading
+    document.getElementById('uploadStatus').style.display = 'block';
+    document.getElementById('projectForm').style.display = 'none';
+    
+    try {
+      // Step 1: Create project
+      const createResult = await ProjectsAPI.create({
+        name: name,
+        description: desc,
+        language: 'python',
+        main_file: mainFile
+      });
+      
+      if (!createResult.success) {
+        showToast(createResult.error || 'فشل إنشاء المشروع', 'error');
+        document.getElementById('uploadStatus').style.display = 'none';
+        document.getElementById('projectForm').style.display = 'block';
+        return;
+      }
+      
+      createdProjectId = createResult.project_id;
+      
+      // Step 2: Upload file
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      
+      const uploadResult = await API.uploadFile(`/projects/${createdProjectId}/upload`, formData);
+      
+      if (uploadResult.success) {
+        showToast('تم رفع المشروع بنجاح!', 'success');
+        
+        // Simulate progress
+        let progress = 0;
+        const interval = setInterval(() => {
+          progress += 10;
+          document.getElementById('progressFill').style.width = progress + '%';
+          
+          if (progress >= 100) {
+            clearInterval(interval);
+            setTimeout(() => {
+              window.location.href = `project-details.html?id=${createdProjectId}`;
+            }, 500);
+          }
+        }, 100);
+      } else {
+        showToast(uploadResult.error || 'فشل رفع الملف', 'error');
+        document.getElementById('uploadStatus').style.display = 'none';
+        document.getElementById('projectForm').style.display = 'block';
+      }
+      
+    } catch (error) {
+      console.error('Upload error:', error);
+      showToast('خطأ في رفع المشروع', 'error');
+      document.getElementById('uploadStatus').style.display = 'none';
+      document.getElementById('projectForm').style.display = 'block';
+    }
+  }
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+
+  function logout() {
+    TokenManager.logout();
+  }
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!TokenManager.isLoggedIn()) {
+      window.location.href = 'login.html';
+      return;
+    }
+    
+    const user = TokenManager.getUser();
+    if (user) {
+      document.getElementById('userName').textContent = user.username;
+      document.getElementById('userRole').textContent = user.role.toUpperCase();
+      document.getElementById('userAvatar').textContent = user.username.charAt(0).toUpperCase();
+      
+      if (['admin', 'superadmin'].includes(user.role)) {
+        document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
