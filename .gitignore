@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+env/
+venv/
+
+# Database (لا ترفع DB على GitHub)
+data/nexhost.db
+data/nexhost.db-shm
+data/nexhost.db-wal
+data/*.db
+logs/
+
+# Secrets
+config.json
+.env
+
+# OS
+.DS_Store
+Thumbs.db
