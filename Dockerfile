@@ -16,4 +16,4 @@ RUN mkdir -p /app/data /app/data/uploads /app/logs
 EXPOSE 5000
 
 # Run gunicorn
-CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:5000", "--timeout", "120", "--access-logfile", "-", "--error-logfile", "-", "backend.app:app"]
+CMD ["gunicorn", "-w", "1", "-b", "0.0.0.0:5000", "--timeout", "120", "--access-logfile", "-", "--error-logfile", "-", "backend.app:app"]
