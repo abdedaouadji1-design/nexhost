@@ -730,6 +730,67 @@ def create_app():
         result = admin_manager.reorder_quick_links(order, admin['role'])
         return jsonify(result), 200 if result['success'] else 400
 
+
+    @app.route('/api/users/me', methods=['GET'])
+    def get_me():
+        """Get current user profile"""
+        user, error_response, status = require_auth()
+        if error_response:
+            return error_response, status
+        if user['role'] == 'superadmin':
+            return jsonify({'success': True, 'user': user}), 200
+        db_user = db.get_user_by_id(user['id'])
+        if not db_user:
+            return jsonify({'success': False, 'error': 'User not found'}), 404
+        return jsonify({'success': True, 'user': {
+            'id': db_user['id'],
+            'username': db_user['username'],
+            'email': db_user.get('email', ''),
+            'role': db_user['role']
+        }}), 200
+
+    @app.route('/api/users/me', methods=['DELETE'])
+    def delete_me():
+        """Delete own account"""
+        user, error_response, status = require_auth()
+        if error_response:
+            return error_response, status
+        if user['role'] in ['admin', 'superadmin']:
+            return jsonify({'success': False, 'error': 'Admins cannot delete their own account'}), 403
+        result = db.delete_user(user['id'])
+        return jsonify(result), 200
+
+    @app.route('/api/users/me/change-password', methods=['POST'])
+    def change_my_password():
+        """Change own password"""
+        user, error_response, status = require_auth()
+        if error_response:
+            return error_response, status
+        data = request.get_json()
+        current_password = data.get('current_password', '')
+        new_password = data.get('new_password', '')
+        if not current_password or not new_password:
+            return jsonify({'success': False, 'error': 'Current and new password required'}), 400
+        if len(new_password) < 6:
+            return jsonify({'success': False, 'error': 'New password must be at least 6 characters'}), 400
+        if user['role'] == 'superadmin':
+            result = auth_manager.change_superadmin_password(current_password, new_password)
+        else:
+            db_user = db.get_user_by_id(user['id'])
+            if not db_user or not auth_manager.verify_password(current_password, db_user['password_hash']):
+                return jsonify({'success': False, 'error': 'Current password is incorrect'}), 400
+            result = auth_manager.change_password(user['id'], new_password)
+        return jsonify(result), 200 if result['success'] else 400
+
+    @app.route('/api/admin/settings', methods=['GET'])
+    def get_admin_settings():
+        """Get admin settings"""
+        admin, error_response, status = require_admin()
+        if error_response:
+            return error_response, status
+        settings = settings_manager.get_settings()
+        return jsonify({'success': True, 'settings': settings}), 200
+
     # =============================================================================
     # FRONTEND ROUTES
     # =============================================================================
