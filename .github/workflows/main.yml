@@ -1,4 +1,4 @@
-herename: Build & Push Docker Image
+name: Build & Push Docker Image
 
 on:
   push:
