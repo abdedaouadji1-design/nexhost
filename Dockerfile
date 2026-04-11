@@ -18,7 +18,6 @@ CMD ["gunicorn", \
      "--timeout", "300", \
      "--graceful-timeout", "30", \
      "--keep-alive", "10", \
-     "--preload", \
      "--max-requests", "500", \
      "--max-requests-jitter", "50", \
      "--access-logfile", "-", \
