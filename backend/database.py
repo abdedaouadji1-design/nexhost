@@ -146,16 +146,19 @@ class Database:
         if result['count'] == 0:
             # Import bcrypt here to avoid circular import
             import bcrypt
-            password_hash = bcrypt.hashpw('superadmin123'.encode('utf-8'), bcrypt.gensalt(rounds=12)).decode('utf-8')
-            cursor.execute('''
-                INSERT INTO super_admin (username, password_hash)
-                VALUES ('superadmin', ?)
-            ''', (password_hash,))
-            print("👑 Super Admin created: superadmin / superadmin123")
+            ")
     
     # User operations
     def create_user(self, username, email, password_hash, role='user'):
         """Create new user"""
+        try:
+    cursor.execute('''
+        INSERT OR IGNORE INTO super_admin (id, username, password_hash)
+        VALUES (1, 'superadmin', ?)
+    ''', (password_hash,))
+    print("👑 Super Admin created: superadmin / superadmin123")
+except Exception:
+    pass
         conn = self.get_connection()
         cursor = conn.cursor()
         try:
