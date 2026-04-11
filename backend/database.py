@@ -119,7 +119,7 @@ class Database:
             CREATE TABLE IF NOT EXISTS quick_links (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT NOT NULL,
-                icon TEXT DEFAULT '🔗',
+                icon TEXT DEFAULT 'ðŸ”—',
                 type TEXT NOT NULL,
                 content TEXT NOT NULL,
                 color TEXT DEFAULT 'cyan',
@@ -136,7 +136,7 @@ class Database:
         self._init_super_admin(cursor)
         
         conn.commit()
-        print("✅ Database initialized successfully")
+        print("âœ… Database initialized successfully")
     
     def _init_super_admin(self, cursor):
         """Initialize super admin if not exists"""
@@ -146,19 +146,19 @@ class Database:
         if result['count'] == 0:
             # Import bcrypt here to avoid circular import
             import bcrypt
-            ")
+            password_hash = bcrypt.hashpw('superadmin123'.encode('utf-8'), bcrypt.gensalt(rounds=12)).decode('utf-8')
+            try:
+                cursor.execute('''
+                    INSERT OR IGNORE INTO super_admin (id, username, password_hash)
+                    VALUES (1, 'superadmin', ?)
+                ''', (password_hash,))
+                print("ðŸ‘‘ Super Admin created: superadmin / superadmin123")
+            except Exception:
+                pass  # Already created by another worker
     
     # User operations
     def create_user(self, username, email, password_hash, role='user'):
         """Create new user"""
-        try:
-    cursor.execute('''
-        INSERT OR IGNORE INTO super_admin (id, username, password_hash)
-        VALUES (1, 'superadmin', ?)
-    ''', (password_hash,))
-    print("👑 Super Admin created: superadmin / superadmin123")
-except Exception:
-    pass
         conn = self.get_connection()
         cursor = conn.cursor()
         try:
@@ -591,3 +591,4 @@ except Exception:
         
         conn.commit()
         return {'success': True}
+
