@@ -2,68 +2,80 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NexHost V4 — تفاصيل المشروع</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NexHost V5 — تفاصيل المشروع</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/shared.css">
 <style>
+  /* Project Header */
   .project-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 20px;
-    padding: 20px;
+    margin-bottom: 24px;
+    padding: 24px;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 14px;
+    border-radius: 16px;
+    flex-wrap: wrap;
+    gap: 20px;
   }
 
   .project-info {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 18px;
   }
 
   .project-icon {
-    width: 56px;
-    height: 56px;
+    width: 64px;
+    height: 64px;
     background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border-radius: 14px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
+    font-size: 28px;
+    flex-shrink: 0;
   }
 
   .project-title-section h1 {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
     color: #fff;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
 
   .project-title-section p {
-    font-size: 13px;
+    font-size: 14px;
     color: var(--muted);
   }
 
   .project-actions {
     display: flex;
     gap: 10px;
+    flex-wrap: wrap;
   }
 
+  .project-actions .btn {
+    min-height: 44px;
+  }
+
+  /* Tabs */
   .tabs {
     display: flex;
     gap: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     border-bottom: 1px solid var(--border);
     padding-bottom: 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .tab {
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 13px;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     border: none;
@@ -71,6 +83,8 @@
     color: var(--muted);
     font-family: 'Cairo', sans-serif;
     transition: all var(--transition-fast);
+    white-space: nowrap;
+    min-height: 44px;
   }
 
   .tab:hover {
@@ -89,12 +103,14 @@
 
   .tab-content.active {
     display: block;
+    animation: fadeIn 0.3s ease;
   }
 
+  /* Code Editor */
   .code-editor {
     background: #050810;
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 14px;
     overflow: hidden;
   }
 
@@ -102,23 +118,25 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 16px;
+    padding: 14px 18px;
     background: var(--surface2);
     border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 10px;
   }
 
   .code-filename {
-    font-size: 12px;
+    font-size: 13px;
     font-family: 'IBM Plex Mono', monospace;
     color: var(--text);
   }
 
   .code-textarea {
     width: 100%;
-    min-height: 400px;
+    min-height: 450px;
     background: transparent;
     border: none;
-    padding: 16px;
+    padding: 18px;
     color: #a8b3cf;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 13px;
@@ -127,15 +145,77 @@
     outline: none;
   }
 
+  /* Logs Terminal */
+  .logs-terminal {
+    background: #050810;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .logs-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .logs-content {
+    padding: 16px 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    max-height: 450px;
+    overflow-y: auto;
+    line-height: 1.8;
+  }
+
+  .log-line {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    padding: 2px 0;
+    animation: fadeIn 0.2s ease;
+  }
+
+  .log-timestamp {
+    color: var(--muted);
+    flex-shrink: 0;
+    font-size: 11px;
+  }
+
+  .log-level {
+    flex-shrink: 0;
+    font-weight: 600;
+    min-width: 50px;
+  }
+
+  .log-level-error { color: var(--red); }
+  .log-level-warning { color: var(--yellow); }
+  .log-level-info { color: var(--accent); }
+  .log-level-success { color: var(--green); }
+  .log-level-debug { color: #a78bfa; }
+
+  .log-message {
+    color: #8b9ab0;
+    word-break: break-all;
+  }
+
+  .log-message.bright { color: var(--text); }
+
+  /* Env Grid */
   .env-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    gap: 14px;
   }
 
   .env-row {
     display: flex;
-    gap: 8px;
+    gap: 10px;
   }
 
   .env-row input {
@@ -143,38 +223,41 @@
   }
 
   .env-row .btn-danger {
-    padding: 8px 12px;
+    padding: 10px 14px;
   }
 
   .add-env-btn {
-    margin-top: 12px;
+    margin-top: 14px;
     width: 100%;
   }
 
+  /* Files Grid */
   .files-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
   }
 
   .file-item {
     background: var(--surface2);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px;
+    border-radius: 12px;
+    padding: 14px;
     cursor: pointer;
     transition: all var(--transition-fast);
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
   }
 
   .file-item:hover {
     border-color: var(--accent);
+    background: rgba(0,216,255,0.03);
   }
 
   .file-item-icon {
-    font-size: 20px;
+    font-size: 24px;
+    flex-shrink: 0;
   }
 
   .file-item-info {
@@ -183,7 +266,7 @@
   }
 
   .file-item-name {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     color: #fff;
     white-space: nowrap;
@@ -192,7 +275,7 @@
   }
 
   .file-item-meta {
-    font-size: 10px;
+    font-size: 11px;
     color: var(--muted);
     font-family: 'IBM Plex Mono', monospace;
   }
@@ -204,49 +287,111 @@
     border: none;
     color: var(--red);
     cursor: pointer;
-    font-size: 14px;
+    font-size: 16px;
+    padding: 8px;
+    border-radius: 8px;
   }
 
   .file-item:hover .file-item-delete {
     opacity: 1;
   }
 
+  .file-item-delete:hover {
+    background: rgba(255,68,102,0.1);
+  }
+
+  /* Stats Grid Mini */
   .stats-grid-mini {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-bottom: 20px;
+    gap: 14px;
+    margin-bottom: 24px;
   }
 
   .stat-mini-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px;
+    border-radius: 12px;
+    padding: 18px;
     text-align: center;
+    transition: all var(--transition-fast);
+  }
+
+  .stat-mini-card:hover {
+    border-color: rgba(0,216,255,0.2);
   }
 
   .stat-mini-value {
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 900;
     color: #fff;
   }
 
   .stat-mini-label {
-    font-size: 11px;
+    font-size: 12px;
     color: var(--muted);
-    margin-top: 4px;
+    margin-top: 6px;
   }
 
+  /* Uptime Badge */
+  .uptime-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0,255,136,0.1);
+    border: 1px solid rgba(0,255,136,0.2);
+    color: var(--green);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* Install Requirements Button */
+  .install-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px;
+    background: rgba(0,255,136,0.1);
+    border: 1px solid rgba(0,255,136,0.2);
+    border-radius: 12px;
+    color: var(--green);
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    margin-bottom: 20px;
+    width: 100%;
+  }
+
+  .install-btn:hover {
+    background: rgba(0,255,136,0.2);
+    transform: translateY(-2px);
+  }
+
+  .install-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Responsive */
   @media (max-width: 768px) {
     .project-header {
       flex-direction: column;
-      gap: 16px;
+      gap: 18px;
       align-items: flex-start;
     }
 
     .project-actions {
       width: 100%;
+    }
+
+    .project-actions .btn {
+      flex: 1;
     }
 
     .tabs {
@@ -263,7 +408,11 @@
     }
 
     .code-textarea {
-      min-height: 300px;
+      min-height: 350px;
+    }
+    
+    .files-grid {
+      grid-template-columns: 1fr;
     }
   }
 </style>
@@ -272,11 +421,14 @@
 
 <!-- Broadcast Banner -->
 <div class="broadcast-banner" id="broadcastBanner">
-    <span id="broadcastIcon">📢</span>
-    <span id="broadcastMsg"></span>
-    <button onclick="document.getElementById('broadcastBanner').classList.remove('show')" 
-            style="margin-right:auto;background:none;border:none;color:inherit;cursor:pointer">×</button>
+  <span id="broadcastIcon">📢</span>
+  <span id="broadcastMsg"></span>
+  <button onclick="document.getElementById('broadcastBanner').classList.remove('show')" 
+          style="margin-right:auto;background:none;border:none;color:inherit;cursor:pointer;font-size:20px">×</button>
 </div>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
 <div class="layout">
 
@@ -286,7 +438,7 @@
       <div class="logo-icon">⚡</div>
       <div>
         <div class="logo-text">NexHost</div>
-        <div class="logo-sub">PANEL v4.0</div>
+        <div class="logo-sub">PANEL v5.0</div>
       </div>
     </div>
 
@@ -327,7 +479,7 @@
   </aside>
 
   <!-- MOBILE MENU BUTTON -->
-  <button class="mobile-menu-btn" onclick="toggleSidebar()" style="position:fixed;top:10px;right:10px;z-index:101">☰</button>
+  <button class="mobile-menu-btn" onclick="toggleSidebar()" style="position:fixed;top:16px;right:16px;z-index:101">☰</button>
 
   <!-- MAIN -->
   <main class="main">
@@ -390,19 +542,19 @@
 
       <!-- Tab: Logs -->
       <div class="tab-content active" id="tab-logs">
-        <div class="card">
-          <div class="card-header">
+        <div class="logs-terminal">
+          <div class="logs-header">
             <div class="card-title">📋 سجلات التشغيل</div>
             <div>
-              <button class="btn btn-ghost" style="font-size:11px;padding:5px 10px" onclick="clearLogs()">مسح</button>
-              <button class="btn btn-ghost" style="font-size:11px;padding:5px 10px" onclick="refreshLogs()">تحديث</button>
+              <button class="btn btn-ghost" style="font-size:12px;padding:6px 12px" onclick="clearLogs()">مسح</button>
+              <button class="btn btn-ghost" style="font-size:12px;padding:6px 12px" onclick="refreshLogs()">تحديث</button>
             </div>
           </div>
-          <div class="log-terminal" id="logTerminal" style="max-height:400px">
+          <div class="logs-content" id="logsContent">
             <div class="log-line">
-              <span class="log-time">--:--:--</span>
-              <span class="log-level-info">[INFO]</span>
-              <span class="log-msg">جاري تحميل السجلات...</span>
+              <span class="log-timestamp">--:--:--</span>
+              <span class="log-level log-level-info">[INFO]</span>
+              <span class="log-message bright">جاري تحميل السجلات...</span>
             </div>
           </div>
         </div>
@@ -413,7 +565,7 @@
         <div class="card">
           <div class="card-header">
             <div class="card-title">📁 ملفات المشروع</div>
-            <button class="btn btn-primary" style="font-size:11px;padding:5px 12px" onclick="uploadFile()">+ رفع ملف</button>
+            <button class="btn btn-primary" style="font-size:12px;padding:6px 14px" onclick="uploadFile()">+ رفع ملف</button>
           </div>
           <div class="card-body">
             <div class="files-grid" id="filesGrid">
@@ -432,8 +584,8 @@
           <div class="code-header">
             <div class="code-filename" id="codeFilename">main.py</div>
             <div>
-              <button class="btn btn-ghost" style="font-size:11px;padding:5px 10px" onclick="saveCode()">💾 حفظ</button>
-              <button class="btn btn-success" style="font-size:11px;padding:5px 10px" onclick="hotReload()">🔄 Hot Reload</button>
+              <button class="btn btn-ghost" style="font-size:12px;padding:6px 12px" onclick="saveCode()">💾 حفظ</button>
+              <button class="btn btn-success" style="font-size:12px;padding:6px 12px" onclick="hotReload()">🔄 Hot Reload</button>
             </div>
           </div>
           <textarea class="code-textarea" id="codeEditor" placeholder="# Your Python code here..."></textarea>
@@ -445,9 +597,12 @@
         <div class="card">
           <div class="card-header">
             <div class="card-title">⚙️ متغيرات البيئة (.env)</div>
-            <button class="btn btn-primary" style="font-size:11px;padding:5px 12px" onclick="saveEnv()">💾 حفظ</button>
+            <button class="btn btn-primary" style="font-size:12px;padding:6px 14px" onclick="saveEnv()">💾 حفظ</button>
           </div>
           <div class="card-body">
+            <button class="install-btn" id="installBtn" onclick="installRequirements()">
+              📦 تثبيت Requirements
+            </button>
             <div class="env-grid" id="envGrid">
               <!-- Env vars will be loaded here -->
             </div>
@@ -491,6 +646,8 @@
   let envVars = {};
   let currentFile = 'main.py';
   let logsInterval = null;
+  let uptimeInterval = null;
+  let uptimeSeconds = 0;
 
   async function loadProject() {
     if (!projectId) {
@@ -512,7 +669,7 @@
       // Update UI
       document.getElementById('projectName').textContent = project.name;
       document.getElementById('projectDesc').textContent = project.description || 'لا يوجد وصف';
-      document.getElementById('projectSubtitle').textContent = `ID: ${project.id} • ${project.language.toUpperCase()}`;
+      document.getElementById('projectSubtitle').textContent = `ID: ${project.id} • ${project.language.toUpperCase()}${project.python_version ? ' ' + project.python_version : ''}`;
       document.getElementById('codeFilename').textContent = project.main_file || 'main.py';
       currentFile = project.main_file || 'main.py';
       
@@ -526,6 +683,11 @@
       
       // Start auto-refresh logs
       logsInterval = setInterval(refreshLogs, 3000);
+      
+      // Start uptime counter if running
+      if (project.status === 'running') {
+        startUptimeCounter();
+      }
       
     } catch (error) {
       console.error('Error loading project:', error);
@@ -543,11 +705,28 @@
       statusEl.style.color = 'var(--green)';
       startBtn.style.display = 'none';
       stopBtn.style.display = 'inline-flex';
+      startUptimeCounter();
     } else {
       statusEl.textContent = '⏹';
       statusEl.style.color = 'var(--red)';
       startBtn.style.display = 'inline-flex';
       stopBtn.style.display = 'none';
+      stopUptimeCounter();
+    }
+  }
+
+  function startUptimeCounter() {
+    stopUptimeCounter();
+    uptimeInterval = setInterval(() => {
+      uptimeSeconds++;
+      document.getElementById('statUptime').textContent = FormatUtils.formatDuration(uptimeSeconds);
+    }, 1000);
+  }
+
+  function stopUptimeCounter() {
+    if (uptimeInterval) {
+      clearInterval(uptimeInterval);
+      uptimeInterval = null;
     }
   }
 
@@ -558,6 +737,10 @@
         files = result.files || [];
         renderFiles();
         document.getElementById('statFiles').textContent = files.length;
+        
+        // Calculate total size
+        const totalSize = files.reduce((acc, f) => acc + (f.size || 0), 0);
+        document.getElementById('statSize').textContent = FormatUtils.formatBytes(totalSize);
       }
     } catch (e) {}
   }
@@ -569,7 +752,7 @@
       grid.innerHTML = `
         <div class="empty-state" style="grid-column:1/-1">
           <div class="empty-state-icon">📂</div>
-          <div>لا توجد ملفات</div>
+          <div class="empty-state-title">لا توجد ملفات</div>
         </div>
       `;
       return;
@@ -577,7 +760,7 @@
     
     grid.innerHTML = files.map(f => `
       <div class="file-item" onclick="openFile('${f.name}')">
-        <div class="file-item-icon">${f.is_dir ? '📁' : '📄'}</div>
+        <div class="file-item-icon">${f.is_dir ? '📁' : getFileIcon(f.name)}</div>
         <div class="file-item-info">
           <div class="file-item-name">${f.name}</div>
           <div class="file-item-meta">${f.is_dir ? 'مجلد' : FormatUtils.formatBytes(f.size || 0)}</div>
@@ -585,6 +768,23 @@
         <button class="file-item-delete" onclick="event.stopPropagation();deleteFile('${f.name}')">🗑️</button>
       </div>
     `).join('');
+  }
+
+  function getFileIcon(filename) {
+    const ext = filename.split('.').pop().toLowerCase();
+    const icons = {
+      py: '🐍',
+      txt: '📄',
+      env: '⚙️',
+      json: '📋',
+      yml: '⚙️',
+      yaml: '⚙️',
+      md: '📝',
+      zip: '📦',
+      tar: '📦',
+      gz: '📦'
+    };
+    return icons[ext] || '📄';
   }
 
   async function loadEnv() {
@@ -602,12 +802,12 @@
     const entries = Object.entries(envVars);
     
     if (entries.length === 0) {
-      grid.innerHTML = '<div style="grid-column:1/-1;color:var(--muted);text-align:center;padding:20px">لا توجد متغيرات</div>';
+      grid.innerHTML = '<div style="grid-column:1/-1;color:var(--muted);text-align:center;padding:24px">لا توجد متغيرات</div>';
       return;
     }
     
     grid.innerHTML = entries.map(([key, value], index) => `
-      <div class="env-row">
+      <div class="env-row" style="animation: fadeIn 0.3s ease ${index * 0.05}s both">
         <input type="text" class="input env-key" placeholder="KEY" value="${escapeHtml(key)}">
         <input type="text" class="input env-value" placeholder="VALUE" value="${escapeHtml(value)}">
         <button class="btn btn-danger" onclick="removeEnvRow(this)">✕</button>
@@ -619,12 +819,17 @@
     const grid = document.getElementById('envGrid');
     const div = document.createElement('div');
     div.className = 'env-row';
+    div.style.animation = 'fadeIn 0.3s ease';
     div.innerHTML = `
       <input type="text" class="input env-key" placeholder="KEY">
       <input type="text" class="input env-value" placeholder="VALUE">
       <button class="btn btn-danger" onclick="removeEnvRow(this)">✕</button>
     `;
     grid.appendChild(div);
+    
+    // Remove empty message if exists
+    const emptyMsg = grid.querySelector('div[style*="grid-column:1/-1"]');
+    if (emptyMsg) emptyMsg.remove();
   }
 
   function removeEnvRow(btn) {
@@ -650,6 +855,26 @@
       }
     } catch (e) {
       showToast('خطأ في حفظ المتغيرات', 'error');
+    }
+  }
+
+  async function installRequirements() {
+    const btn = document.getElementById('installBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-color:rgba(0,255,136,0.3);border-top-color:var(--green)"></div> جاري التثبيت...';
+    
+    try {
+      const result = await API.post(`/projects/${projectId}/install-requirements`, {});
+      if (result.success) {
+        showToast('تم تثبيت المتطلبات بنجاح', 'success');
+      } else {
+        showToast(result.error || 'فشل التثبيت', 'error');
+      }
+    } catch (e) {
+      showToast('خطأ في تثبيت المتطلبات', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '📦 تثبيت Requirements';
     }
   }
 
@@ -703,41 +928,85 @@
 
   async function refreshLogs() {
     try {
-      const result = await ProjectsAPI.getLogs(projectId, 50);
+      const result = await ProjectsAPI.getLogs(projectId, 100);
       if (result.success && result.logs) {
-        const terminal = document.getElementById('logTerminal');
-        terminal.innerHTML = result.logs.map(line => {
-          const timeMatch = line.match(/^\[(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})\]/);
-          const time = timeMatch ? timeMatch[1].split(' ')[1] : '--:--:--';
-          const msg = line.replace(/^\[.*?\]\s*/, '').trim();
-          
-          let levelClass = 'log-msg';
-          if (line.includes('ERROR') || line.includes('❌')) levelClass = 'log-level-err';
-          else if (line.includes('WARNING') || line.includes('⚠️')) levelClass = 'log-level-warn';
-          else if (line.includes('SUCCESS') || line.includes('✅')) levelClass = 'log-level-ok';
-          else if (line.includes('INFO') || line.includes('ℹ️')) levelClass = 'log-level-info';
-          
+        const logsContent = document.getElementById('logsContent');
+        
+        if (result.logs.length === 0) {
+          logsContent.innerHTML = `
+            <div class="log-line">
+              <span class="log-timestamp">${new Date().toLocaleTimeString('ar-SA')}</span>
+              <span class="log-level log-level-info">[INFO]</span>
+              <span class="log-message">لا توجد سجلات</span>
+            </div>
+          `;
+          return;
+        }
+        
+        logsContent.innerHTML = result.logs.map(line => {
+          const parsed = parseLogLine(line);
           return `
             <div class="log-line">
-              <span class="log-time">${time}</span>
-              <span class="${levelClass}">${escapeHtml(msg || line)}</span>
+              <span class="log-timestamp">${parsed.timestamp}</span>
+              <span class="log-level log-level-${parsed.levelClass}">[${parsed.level}]</span>
+              <span class="log-message ${parsed.isBright ? 'bright' : ''}">${escapeHtml(parsed.message)}</span>
             </div>
           `;
         }).join('');
         
-        terminal.scrollTop = terminal.scrollHeight;
+        logsContent.scrollTop = logsContent.scrollHeight;
       }
     } catch (e) {}
   }
 
+  function parseLogLine(line) {
+    // Default values
+    let timestamp = '--:--:--';
+    let level = 'INFO';
+    let levelClass = 'info';
+    let message = line;
+    let isBright = false;
+    
+    // Try to extract timestamp
+    const timeMatch = line.match(/^(\d{4}-\d{2}-\d{2}\s+)?(\d{2}:\d{2}:\d{2})/);
+    if (timeMatch) {
+      timestamp = timeMatch[2];
+      message = line.replace(timeMatch[0], '').trim();
+    }
+    
+    // Detect log level
+    const upperLine = line.toUpperCase();
+    if (upperLine.includes('ERROR') || upperLine.includes('EXCEPTION') || upperLine.includes('❌') || upperLine.includes('Traceback')) {
+      level = 'ERROR';
+      levelClass = 'error';
+      isBright = true;
+    } else if (upperLine.includes('WARNING') || upperLine.includes('WARN') || upperLine.includes('⚠️')) {
+      level = 'WARN';
+      levelClass = 'warning';
+    } else if (upperLine.includes('SUCCESS') || upperLine.includes('✅') || upperLine.includes('✓')) {
+      level = 'SUCCESS';
+      levelClass = 'success';
+      isBright = true;
+    } else if (upperLine.includes('DEBUG') || upperLine.includes('🐛')) {
+      level = 'DEBUG';
+      levelClass = 'debug';
+    }
+    
+    // Clean up message
+    message = message.replace(/^\[.*?\]\s*/, '').trim();
+    
+    return { timestamp, level, levelClass, message, isBright };
+  }
+
   function clearLogs() {
-    document.getElementById('logTerminal').innerHTML = `
+    document.getElementById('logsContent').innerHTML = `
       <div class="log-line">
-        <span class="log-time">${new Date().toLocaleTimeString('ar-SA')}</span>
-        <span class="log-level-ok">[OK]</span>
-        <span class="log-msg bright">تم مسح السجلات ▌</span>
+        <span class="log-timestamp">${new Date().toLocaleTimeString('ar-SA')}</span>
+        <span class="log-level log-level-ok">[OK]</span>
+        <span class="log-message bright">تم مسح السجلات ▌</span>
       </div>
     `;
+    showToast('تم مسح السجلات', 'success');
   }
 
   async function startProject() {
@@ -790,19 +1059,19 @@
   }
 
   async function deleteFile(filename) {
-    if (!confirm(`هل أنت متأكد من حذف "${filename}"؟`)) return;
-    
-    try {
-      const result = await ProjectsAPI.deleteFile(projectId, filename);
-      if (result.success) {
-        showToast('تم حذف الملف', 'success');
-        loadFiles();
-      } else {
-        showToast(result.error || 'فشل الحذف', 'error');
+    showConfirm('حذف الملف', `هل أنت متأكد من حذف "${filename}"؟`, async () => {
+      try {
+        const result = await ProjectsAPI.deleteFile(projectId, filename);
+        if (result.success) {
+          showToast('تم حذف الملف', 'success');
+          loadFiles();
+        } else {
+          showToast(result.error || 'فشل الحذف', 'error');
+        }
+      } catch (e) {
+        showToast('خطأ في حذف الملف', 'error');
       }
-    } catch (e) {
-      showToast('خطأ في حذف الملف', 'error');
-    }
+    });
   }
 
   function uploadFile() {
@@ -838,7 +1107,10 @@
   }
 
   function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('open');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('open');
   }
 
   function logout() {
@@ -882,6 +1154,7 @@
   // Cleanup
   window.addEventListener('beforeunload', () => {
     if (logsInterval) clearInterval(logsInterval);
+    stopUptimeCounter();
   });
 </script>
 

@@ -2,32 +2,49 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NexHost V4 — لوحة التحكم</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NexHost V5 — لوحة التحكم</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/shared.css">
 <style>
-  /* PROJECTS GRID */
+  /* Projects Grid */
   .projects-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: 18px;
     margin-bottom: 24px;
   }
 
   .project-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 20px;
+    border-radius: 16px;
+    padding: 22px;
     cursor: pointer;
     transition: all var(--transition-fast);
     position: relative;
+    overflow: hidden;
+  }
+
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+
+  .project-card:hover::before {
+    transform: scaleX(1);
   }
 
   .project-card:hover {
     border-color: rgba(0,216,255,0.3);
-    transform: translateY(-3px);
+    transform: translateY(-4px);
     box-shadow: var(--glow);
   }
 
@@ -35,15 +52,15 @@
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
   }
 
   .project-lang {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 4px 10px;
-    border-radius: 6px;
+    padding: 5px 12px;
+    border-radius: 8px;
     font-size: 11px;
     font-weight: 700;
     font-family: 'IBM Plex Mono', monospace;
@@ -56,39 +73,44 @@
   }
 
   .project-name {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 700;
     color: #fff;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
   }
 
   .project-desc {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--muted);
-    margin-bottom: 14px;
+    margin-bottom: 16px;
     line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .project-meta {
     display: flex;
-    gap: 12px;
-    margin-bottom: 14px;
+    gap: 14px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
   }
 
   .meta-item {
     display: flex;
     align-items: center;
     gap: 5px;
-    font-size: 11px;
+    font-size: 12px;
     color: var(--muted);
     font-family: 'IBM Plex Mono', monospace;
   }
 
   .project-bar-bg {
-    height: 3px;
+    height: 4px;
     background: var(--surface2);
     border-radius: 2px;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
     overflow: hidden;
   }
 
@@ -106,8 +128,8 @@
 
   .action-btn {
     flex: 1;
-    padding: 7px;
-    border-radius: 7px;
+    padding: 10px;
+    border-radius: 10px;
     border: 1px solid var(--border);
     background: var(--surface2);
     color: var(--muted);
@@ -120,6 +142,7 @@
     align-items: center;
     justify-content: center;
     gap: 5px;
+    min-height: 40px;
   }
 
   .action-btn:hover {
@@ -134,51 +157,73 @@
     background: rgba(255,68,102,0.05);
   }
 
-  /* ADD NEW CARD */
+  /* Add New Card */
   .add-project-card {
     border-style: dashed;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    min-height: 200px;
-    opacity: 0.6;
-    transition: opacity var(--transition-fast);
+    gap: 12px;
+    min-height: 220px;
+    opacity: 0.7;
+    transition: all var(--transition-fast);
   }
 
   .add-project-card:hover {
     opacity: 1;
     border-color: var(--accent);
+    background: rgba(0,216,255,0.03);
   }
 
-  /* BOTTOM GRID */
+  .add-project-card .plus-icon {
+    width: 56px;
+    height: 56px;
+    background: var(--surface2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    transition: all var(--transition-fast);
+  }
+
+  .add-project-card:hover .plus-icon {
+    background: var(--accent);
+    color: #000;
+    transform: scale(1.1);
+  }
+
+  /* Bottom Grid */
   .bottom-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 18px;
   }
 
-  /* LOG TERMINAL */
+  /* Log Terminal */
   .log-terminal {
     background: #050810;
-    padding: 14px 18px;
+    padding: 16px 20px;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11.5px;
-    max-height: 200px;
+    font-size: 12px;
+    max-height: 220px;
     overflow-y: auto;
     line-height: 1.8;
+    border-radius: 12px;
   }
 
   .log-line {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     align-items: baseline;
+    padding: 2px 0;
   }
 
   .log-time {
     color: var(--muted);
     flex-shrink: 0;
+    font-size: 11px;
   }
 
   .log-level-info { color: var(--accent); }
@@ -188,18 +233,18 @@
   .log-msg { color: #8b9ab0; }
   .log-msg.bright { color: var(--text); }
 
-  /* RESOURCES */
+  /* Resources */
   .resource-list {
-    padding: 16px 20px;
+    padding: 18px 22px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 16px;
   }
 
   .resource-row {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
   }
 
   .resource-top {
@@ -209,7 +254,7 @@
   }
 
   .resource-name {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     color: var(--text);
   }
@@ -221,7 +266,7 @@
   }
 
   .res-bar-bg {
-    height: 5px;
+    height: 6px;
     background: var(--surface2);
     border-radius: 3px;
     overflow: hidden;
@@ -245,12 +290,12 @@
     background: linear-gradient(90deg, #00cc66, var(--green));
   }
 
-  /* UPLOAD ZONE */
+  /* Upload Zone */
   .upload-zone {
-    margin: 16px 20px;
+    margin: 18px 22px;
     border: 2px dashed var(--border);
-    border-radius: 12px;
-    padding: 28px;
+    border-radius: 14px;
+    padding: 32px;
     text-align: center;
     transition: all var(--transition-fast);
     cursor: pointer;
@@ -262,65 +307,104 @@
   }
 
   .upload-icon {
-    font-size: 28px;
-    margin-bottom: 8px;
+    font-size: 32px;
+    margin-bottom: 10px;
   }
 
   .upload-title {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 700;
     color: #fff;
     margin-bottom: 4px;
   }
 
   .upload-sub {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--muted);
+  }
+
+  .upload-tags {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 12px;
+    flex-wrap: wrap;
   }
 
   .upload-tag {
     display: inline-block;
-    margin-top: 10px;
-    padding: 3px 10px;
+    padding: 4px 12px;
     background: rgba(0,216,255,0.08);
     border: 1px solid rgba(0,216,255,0.15);
-    border-radius: 5px;
+    border-radius: 6px;
     font-size: 11px;
     font-family: 'IBM Plex Mono', monospace;
     color: var(--accent);
-    margin: 10px 4px 0;
   }
 
-  /* SECTION HEADER */
+  /* Section Header */
   .section-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 10px;
   }
 
   .section-title {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
     color: #fff;
   }
 
   .section-sub {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--muted);
-    margin-top: 2px;
+    margin-top: 3px;
   }
 
-  /* Empty state */
-  .empty-state {
+  /* Running Projects Counter */
+  .running-counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0,255,136,0.1);
+    border: 1px solid rgba(0,255,136,0.2);
+    color: var(--green);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    animation: counterPulse 2s infinite;
+  }
+
+  @keyframes counterPulse {
+    0%, 100% { box-shadow: 0 0 10px rgba(0,255,136,0.2); }
+    50% { box-shadow: 0 0 20px rgba(0,255,136,0.4); }
+  }
+
+  /* Pull to refresh indicator */
+  .pull-refresh {
+    display: none;
     text-align: center;
-    padding: 40px;
+    padding: 16px;
     color: var(--muted);
+    font-size: 13px;
   }
 
-  .empty-state-icon {
-    font-size: 48px;
-    margin-bottom: 16px;
+  .pull-refresh.visible {
+    display: block;
+  }
+
+  .pull-refresh-spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 8px;
   }
 
   /* Responsive */
@@ -346,20 +430,30 @@
     .stats-grid {
       grid-template-columns: repeat(2, 1fr);
     }
+    
+    .project-card {
+      padding: 18px;
+    }
+    
+    .project-actions {
+      flex-wrap: wrap;
+    }
+    
+    .action-btn {
+      font-size: 13px;
+      padding: 12px;
+      min-height: 44px;
+    }
   }
 
   @media (max-width: 480px) {
     .stats-grid {
       grid-template-columns: 1fr;
     }
-
-    .project-actions {
-      flex-wrap: wrap;
-    }
-
-    .action-btn {
-      font-size: 11px;
-      padding: 6px;
+    
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
     }
   }
 </style>
@@ -368,19 +462,22 @@
 
 <!-- Broadcast Banner -->
 <div class="broadcast-banner" id="broadcastBanner">
-    <span id="broadcastIcon">📢</span>
-    <span id="broadcastMsg"></span>
-    <button onclick="document.getElementById('broadcastBanner').classList.remove('show')" 
-            style="margin-right:auto;background:none;border:none;color:inherit;cursor:pointer">×</button>
+  <span id="broadcastIcon">📢</span>
+  <span id="broadcastMsg"></span>
+  <button onclick="document.getElementById('broadcastBanner').classList.remove('show')" 
+          style="margin-right:auto;background:none;border:none;color:inherit;cursor:pointer;font-size:20px">×</button>
 </div>
 
 <!-- Maintenance Screen -->
 <div class="maintenance-screen" id="maintenanceScreen">
-    <div class="maintenance-icon">🔧</div>
-    <div style="font-size:24px;font-weight:900;color:#fff" id="maintenanceTitle">النظام تحت الصيانة</div>
-    <div style="font-size:14px;color:var(--muted);max-width:400px" id="maintenanceMsg"></div>
-    <div style="font-size:13px;color:var(--accent);font-family:'IBM Plex Mono',monospace" id="maintenanceTimer"></div>
+  <div class="maintenance-icon">🔧</div>
+  <div style="font-size:24px;font-weight:900;color:#fff" id="maintenanceTitle">النظام تحت الصيانة</div>
+  <div style="font-size:14px;color:var(--muted);max-width:400px" id="maintenanceMsg"></div>
+  <div style="font-size:13px;color:var(--accent);font-family:'IBM Plex Mono',monospace" id="maintenanceTimer"></div>
 </div>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
 <div class="layout">
 
@@ -390,7 +487,7 @@
       <div class="logo-icon">⚡</div>
       <div>
         <div class="logo-text">NexHost</div>
-        <div class="logo-sub">PANEL v4.0</div>
+        <div class="logo-sub">PANEL v5.0</div>
       </div>
     </div>
 
@@ -432,7 +529,7 @@
   </aside>
 
   <!-- MOBILE MENU BUTTON -->
-  <button class="mobile-menu-btn" onclick="toggleSidebar()" style="position:fixed;top:10px;right:10px;z-index:101">☰</button>
+  <button class="mobile-menu-btn" onclick="toggleSidebar()" style="position:fixed;top:16px;right:16px;z-index:101">☰</button>
 
   <!-- MAIN -->
   <main class="main">
@@ -443,6 +540,10 @@
         <div class="page-sub" id="welcomeMessage">مرحباً بك — كل شيء يعمل بشكل مثالي ✨</div>
       </div>
       <div class="topbar-actions">
+        <div class="running-counter" id="runningCounter" style="display:none">
+          <span>🟢</span>
+          <span id="runningCount">0</span> مشروع يعمل
+        </div>
         <button class="btn btn-ghost superadmin-only" id="superadminBtn" style="display:none" onclick="location.href='admin.html'">
           ⚙️ لوحة الأدمن
         </button>
@@ -452,6 +553,12 @@
     </div>
 
     <div class="content">
+
+      <!-- Pull to Refresh (Mobile) -->
+      <div class="pull-refresh" id="pullRefresh">
+        <div class="pull-refresh-spinner"></div>
+        <div>اسحب للأسفل للتحديث</div>
+      </div>
 
       <!-- STATS -->
       <div class="stats-grid">
@@ -509,12 +616,19 @@
         <button class="btn btn-ghost" style="font-size:12px" onclick="showToast('قريباً', 'info')">عرض الكل ←</button>
       </div>
 
+      <!-- Skeleton Loading -->
+      <div class="projects-grid" id="skeletonGrid" style="display:none">
+        <div class="project-card skeleton skeleton-card"></div>
+        <div class="project-card skeleton skeleton-card"></div>
+        <div class="project-card skeleton skeleton-card"></div>
+      </div>
+
       <div class="projects-grid" id="projectsGrid">
         <!-- Projects will be loaded here -->
-        <div class="empty-state">
+        <div class="empty-state" style="grid-column:1/-1">
           <div class="empty-state-icon">📭</div>
-          <div>لا توجد مشاريع</div>
-          <div style="font-size:12px;margin-top:8px">اضغط على "مشروع جديد" لبدء الاستضافة</div>
+          <div class="empty-state-title">لا توجد مشاريع</div>
+          <div class="empty-state-desc">اضغط على "مشروع جديد" لبدء الاستضافة</div>
         </div>
       </div>
 
@@ -525,7 +639,7 @@
         <div class="card">
           <div class="card-header">
             <div class="card-title">📋 السجلات المباشرة</div>
-            <button class="btn btn-ghost" style="font-size:11px;padding:5px 10px" onclick="clearLogs()">مسح</button>
+            <button class="btn btn-ghost" style="font-size:11px;padding:6px 12px" onclick="clearLogs()">مسح</button>
           </div>
           <div class="log-terminal" id="logTerminal">
             <div class="log-line">
@@ -537,12 +651,12 @@
         </div>
 
         <!-- RESOURCES + UPLOAD -->
-        <div style="display:flex;flex-direction:column;gap:16px;">
+        <div style="display:flex;flex-direction:column;gap:18px;">
 
           <div class="card">
             <div class="card-header">
               <div class="card-title">📊 موارد السيرفر</div>
-              <span style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--green)">● LIVE</span>
+              <span style="font-size:12px;font-family:'IBM Plex Mono',monospace;color:var(--green)" class="dot-green">● LIVE</span>
             </div>
             <div class="resource-list">
               <div class="resource-row">
@@ -583,9 +697,10 @@
               <div class="upload-icon">📂</div>
               <div class="upload-title">اسحب ملفاتك هنا</div>
               <div class="upload-sub">أو اضغط للاختيار من جهازك</div>
-              <div>
+              <div class="upload-tags">
                 <span class="upload-tag">.py</span>
                 <span class="upload-tag">.zip</span>
+                <span class="upload-tag">.env</span>
               </div>
             </div>
           </div>
@@ -621,9 +736,15 @@
 <script>
   let projects = [];
   let systemStatsInterval;
+  let touchStartY = 0;
 
   // Load dashboard data
-  async function loadDashboard() {
+  async function loadDashboard(showLoading = true) {
+    if (showLoading) {
+      document.getElementById('skeletonGrid').style.display = 'grid';
+      document.getElementById('projectsGrid').style.display = 'none';
+    }
+    
     try {
       // Load projects
       const projectsResult = await ProjectsAPI.getAll();
@@ -639,6 +760,10 @@
     } catch (error) {
       console.error('Error loading dashboard:', error);
       showToast('خطأ في تحميل البيانات', 'error');
+    } finally {
+      document.getElementById('skeletonGrid').style.display = 'none';
+      document.getElementById('projectsGrid').style.display = 'grid';
+      document.getElementById('pullRefresh').classList.remove('visible');
     }
   }
 
@@ -650,8 +775,8 @@
       grid.innerHTML = `
         <div class="empty-state" style="grid-column:1/-1">
           <div class="empty-state-icon">📭</div>
-          <div>لا توجد مشاريع</div>
-          <div style="font-size:12px;margin-top:8px">
+          <div class="empty-state-title">لا توجد مشاريع</div>
+          <div class="empty-state-desc">
             <a href="upload.html" style="color:var(--accent)">اضغط هنا</a> لإضافة مشروع جديد
           </div>
         </div>
@@ -659,8 +784,9 @@
       return;
     }
 
-    grid.innerHTML = projects.map(project => `
-      <div class="project-card" onclick="location.href='project-details.html?id=${project.id}'">
+    grid.innerHTML = projects.map((project, index) => `
+      <div class="project-card" onclick="location.href='project-details.html?id=${project.id}'" 
+           style="animation: fadeInUp 0.4s ease ${index * 0.1}s both">
         <div class="project-top">
           <span class="project-lang lang-py">
             🐍 PYTHON
@@ -692,9 +818,9 @@
       </div>
     `).join('') + `
       <div class="project-card add-project-card" onclick="location.href='upload.html'">
-        <div style="font-size:32px">+</div>
-        <div style="font-size:14px;font-weight:700;color:#fff">مشروع جديد</div>
-        <div style="font-size:12px;color:var(--muted);text-align:center">ارفع ملف .py</div>
+        <div class="plus-icon">+</div>
+        <div style="font-size:15px;font-weight:700;color:#fff">مشروع جديد</div>
+        <div style="font-size:13px;color:var(--muted);text-align:center">ارفع ملف .py</div>
       </div>
     `;
   }
@@ -707,6 +833,16 @@
     document.getElementById('totalProjects').textContent = total;
     document.getElementById('runningProjects').textContent = running;
     document.getElementById('projectCount').textContent = total;
+    
+    // Update running counter in header
+    const runningCounter = document.getElementById('runningCounter');
+    const runningCount = document.getElementById('runningCount');
+    if (running > 0) {
+      runningCounter.style.display = 'inline-flex';
+      runningCount.textContent = running;
+    } else {
+      runningCounter.style.display = 'none';
+    }
   }
 
   // Load system stats
@@ -721,8 +857,9 @@
         document.getElementById('cpuUsage').innerHTML = `${cpuPercent}<span style="font-size:16px;color:var(--muted)">%</span>`;
         document.getElementById('cpuVal').textContent = `${cpuPercent}% / 100%`;
         document.getElementById('cpuBar').style.width = `${cpuPercent}%`;
-        document.getElementById('cpuText').textContent = cpuPercent > 80 ? 'مرتفع!' : 'طبيعي';
-        document.getElementById('cpuText').style.color = cpuPercent > 80 ? 'var(--red)' : 'var(--green)';
+        const cpuText = document.getElementById('cpuText');
+        cpuText.textContent = cpuPercent > 80 ? 'مرتفع!' : 'طبيعي';
+        cpuText.style.color = cpuPercent > 80 ? 'var(--red)' : 'var(--green)';
         
         // RAM
         const ramPercent = stats.memory?.percent || 0;
@@ -747,6 +884,10 @@
 
   // Toggle project start/stop
   async function toggleProject(projectId, currentStatus) {
+    const btn = event.target;
+    btn.classList.add('btn-loading');
+    btn.disabled = true;
+    
     if (currentStatus === 'running') {
       const result = await ProjectsAPI.stop(projectId);
       if (result.success) {
@@ -763,8 +904,11 @@
       }
     }
     
+    btn.classList.remove('btn-loading');
+    btn.disabled = false;
+    
     // Reload after a short delay
-    setTimeout(loadDashboard, 1000);
+    setTimeout(() => loadDashboard(false), 1000);
   }
 
   // View logs
@@ -781,11 +925,15 @@
         <span class="log-msg bright">تم مسح السجلات ▌</span>
       </div>
     `;
+    showToast('تم مسح السجلات', 'success');
   }
 
   // Toggle sidebar on mobile
   function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('open');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('open');
   }
 
   // Logout
@@ -807,6 +955,40 @@
     const timeStr = now.toLocaleTimeString('ar-SA');
     const timeEl = document.getElementById('currentTime');
     if (timeEl) timeEl.textContent = timeStr;
+  }
+
+  // Pull to refresh (mobile)
+  function initPullToRefresh() {
+    let startY = 0;
+    let isPulling = false;
+    
+    document.addEventListener('touchstart', (e) => {
+      if (window.scrollY === 0) {
+        startY = e.touches[0].clientY;
+        isPulling = true;
+      }
+    }, { passive: true });
+    
+    document.addEventListener('touchmove', (e) => {
+      if (!isPulling) return;
+      const currentY = e.touches[0].clientY;
+      const diff = currentY - startY;
+      
+      if (diff > 80 && window.scrollY === 0) {
+        document.getElementById('pullRefresh').classList.add('visible');
+      }
+    }, { passive: true });
+    
+    document.addEventListener('touchend', (e) => {
+      if (!isPulling) return;
+      const currentY = e.changedTouches[0].clientY;
+      const diff = currentY - startY;
+      
+      if (diff > 80 && window.scrollY === 0) {
+        loadDashboard();
+      }
+      isPulling = false;
+    }, { passive: true });
   }
 
   // Initialize
@@ -847,6 +1029,9 @@
     // Update time
     updateTime();
     setInterval(updateTime, 1000);
+    
+    // Init pull to refresh
+    initPullToRefresh();
   });
 
   // Cleanup on page unload

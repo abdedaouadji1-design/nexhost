@@ -2,46 +2,106 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NexHost V4 — المستخدمين</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NexHost V5 — المستخدمين</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/shared.css">
 <style>
+  /* Users Header */
   .users-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 14px;
   }
 
+  .search-filter-row {
+    display: flex;
+    gap: 12px;
+    flex: 1;
+    max-width: 600px;
+  }
+
+  .search-box {
+    position: relative;
+    flex: 1;
+  }
+
+  .search-box input {
+    width: 100%;
+    padding: 12px 44px 12px 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: #fff;
+    font-size: 14px;
+    font-family: 'Cairo', sans-serif;
+    outline: none;
+    transition: all var(--transition-fast);
+    min-height: 48px;
+  }
+
+  .search-box input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(0,216,255,0.1);
+  }
+
+  .search-box .search-icon {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: var(--muted);
+  }
+
+  .filter-select {
+    padding: 12px 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: #fff;
+    font-size: 14px;
+    font-family: 'Cairo', sans-serif;
+    outline: none;
+    cursor: pointer;
+    min-width: 140px;
+    min-height: 48px;
+  }
+
+  /* Users Grid */
   .users-grid {
     display: grid;
-    gap: 12px;
+    gap: 14px;
   }
 
   .user-card-item {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px 20px;
+    border-radius: 14px;
+    padding: 18px 22px;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 18px;
     transition: all var(--transition-fast);
+    animation: fadeInUp 0.3s ease;
   }
 
   .user-card-item:hover {
     border-color: rgba(0,216,255,0.25);
+    transform: translateX(-4px);
   }
 
   .user-avatar-lg {
-    width: 48px;
-    height: 48px;
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
     flex-shrink: 0;
   }
@@ -58,37 +118,61 @@
     background: linear-gradient(135deg, var(--muted), #3a4a5a);
   }
 
+  .user-avatar-lg.superadmin {
+    background: linear-gradient(135deg, #ffd700, #ffaa00);
+    color: #000;
+  }
+
   .user-info-lg {
     flex: 1;
+    min-width: 0;
   }
 
   .user-name-lg {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 700;
     color: #fff;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    flex-wrap: wrap;
   }
 
   .user-meta-lg {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--muted);
-    margin-top: 4px;
+    margin-top: 6px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .user-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
   }
 
   .user-actions {
     display: flex;
     gap: 8px;
+    flex-wrap: wrap;
   }
 
+  .user-actions .btn {
+    padding: 8px 14px;
+    font-size: 12px;
+    min-height: 36px;
+  }
+
+  /* Status Badge */
   .status-badge {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    padding: 3px 10px;
+    gap: 5px;
+    padding: 4px 12px;
     border-radius: 20px;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
   }
 
@@ -104,21 +188,13 @@
     border: 1px solid rgba(255,68,102,0.2);
   }
 
-  .superadmin-badge {
-    background: linear-gradient(135deg, #ffd700, #ffaa00);
-    color: #000;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 10px;
-  }
-
+  /* Role Badge */
   .role-badge {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    padding: 3px 10px;
-    border-radius: 6px;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 8px;
     font-size: 11px;
     font-weight: 700;
     font-family: 'IBM Plex Mono', monospace;
@@ -142,15 +218,62 @@
     border: 1px solid rgba(124,58,237,0.2);
   }
 
+  .role-superadmin {
+    background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,170,0,0.15));
+    color: var(--yellow);
+    border: 1px solid rgba(255,215,0,0.3);
+  }
+
+  /* Users Count */
+  .users-count {
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  /* Responsive */
   @media (max-width: 768px) {
+    .users-header {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .search-filter-row {
+      max-width: 100%;
+    }
+
     .user-card-item {
       flex-direction: column;
       align-items: flex-start;
+      gap: 14px;
     }
 
     .user-actions {
       width: 100%;
       justify-content: flex-end;
+    }
+    
+    .user-meta-lg {
+      font-size: 12px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .search-filter-row {
+      flex-direction: column;
+    }
+    
+    .filter-select {
+      width: 100%;
+    }
+    
+    .user-actions {
+      flex-direction: column;
+    }
+    
+    .user-actions .btn {
+      width: 100%;
+      justify-content: center;
     }
   }
 </style>
@@ -159,11 +282,14 @@
 
 <!-- Broadcast Banner -->
 <div class="broadcast-banner" id="broadcastBanner">
-    <span id="broadcastIcon">📢</span>
-    <span id="broadcastMsg"></span>
-    <button onclick="document.getElementById('broadcastBanner').classList.remove('show')" 
-            style="margin-right:auto;background:none;border:none;color:inherit;cursor:pointer">×</button>
+  <span id="broadcastIcon">📢</span>
+  <span id="broadcastMsg"></span>
+  <button onclick="document.getElementById('broadcastBanner').classList.remove('show')" 
+          style="margin-right:auto;background:none;border:none;color:inherit;cursor:pointer;font-size:20px">×</button>
 </div>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
 <div class="layout">
 
@@ -173,7 +299,7 @@
       <div class="logo-icon">⚡</div>
       <div>
         <div class="logo-text">NexHost</div>
-        <div class="logo-sub">PANEL v4.0</div>
+        <div class="logo-sub">PANEL v5.0</div>
       </div>
     </div>
 
@@ -214,7 +340,7 @@
   </aside>
 
   <!-- MOBILE MENU BUTTON -->
-  <button class="mobile-menu-btn" onclick="toggleSidebar()" style="position:fixed;top:10px;right:10px;z-index:101">☰</button>
+  <button class="mobile-menu-btn" onclick="toggleSidebar()" style="position:fixed;top:16px;right:16px;z-index:101">☰</button>
 
   <!-- MAIN -->
   <main class="main">
@@ -233,14 +359,40 @@
 
       <div class="users-header">
         <div class="section-title">👥 قائمة المستخدمين</div>
-        <div style="font-size:12px;color:var(--muted)" id="usersCount">0 مستخدم</div>
+        <div class="users-count" id="usersCount">0 مستخدم</div>
+      </div>
+
+      <div class="search-filter-row" style="margin-bottom: 20px;">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" placeholder="البحث في المستخدمين..." oninput="filterUsers()">
+        </div>
+        <select class="filter-select" id="roleFilter" onchange="filterUsers()">
+          <option value="all">كل الأدوار</option>
+          <option value="superadmin">Super Admin</option>
+          <option value="admin">Admin</option>
+          <option value="user">User</option>
+          <option value="viewer">Viewer</option>
+        </select>
+        <select class="filter-select" id="statusFilter" onchange="filterUsers()">
+          <option value="all">كل الحالات</option>
+          <option value="active">نشط</option>
+          <option value="inactive">معطل</option>
+        </select>
+      </div>
+
+      <!-- Skeleton Loading -->
+      <div class="users-grid" id="skeletonGrid" style="display:none">
+        <div class="user-card-item skeleton" style="height: 100px;"></div>
+        <div class="user-card-item skeleton" style="height: 100px;"></div>
+        <div class="user-card-item skeleton" style="height: 100px;"></div>
       </div>
 
       <div class="users-grid" id="usersGrid">
         <!-- Users will be loaded here -->
         <div class="empty-state">
           <div class="empty-state-icon">👤</div>
-          <div>جاري تحميل المستخدمين...</div>
+          <div class="empty-state-title">جاري تحميل المستخدمين...</div>
         </div>
       </div>
 
@@ -274,7 +426,7 @@
     <div class="modal-sub">أدخل بيانات المستخدم الجديد</div>
     
     <div class="field">
-      <label>👤 اسم المستخدم</label>
+      <label>👤 اسم المستخدم *</label>
       <input type="text" class="input" id="newUsername" placeholder="اسم المستخدم">
     </div>
     
@@ -284,7 +436,7 @@
     </div>
     
     <div class="field">
-      <label>🔒 كلمة المرور</label>
+      <label>🔒 كلمة المرور *</label>
       <input type="password" class="input" id="newPassword" placeholder="********">
     </div>
     
@@ -299,7 +451,46 @@
     
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="document.getElementById('addUserModal').classList.remove('open')">إلغاء</button>
-      <button class="btn btn-primary" onclick="addUser()">إضافة</button>
+      <button class="btn btn-primary" onclick="addUser()" id="addUserBtn">إضافة</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal-overlay" id="editUserModal">
+  <div class="modal">
+    <div class="modal-title">✏️ تعديل مستخدم</div>
+    <div class="modal-sub">تعديل بيانات المستخدم</div>
+    
+    <input type="hidden" id="editUserId">
+    
+    <div class="field">
+      <label>👤 اسم المستخدم</label>
+      <input type="text" class="input" id="editUsername" readonly>
+    </div>
+    
+    <div class="field">
+      <label>📧 البريد الإلكتروني</label>
+      <input type="email" class="input" id="editEmail" placeholder="email@example.com">
+    </div>
+    
+    <div class="field">
+      <label>🎭 الدور</label>
+      <select class="select" id="editRole">
+        <option value="user">User - مستخدم عادي</option>
+        <option value="admin">Admin - مشرف</option>
+        <option value="viewer">Viewer - مشاهد فقط</option>
+      </select>
+    </div>
+    
+    <div class="field">
+      <label>🔒 كلمة مرور جديدة (اترك فارغاً للإبقاء على الحالية)</label>
+      <input type="password" class="input" id="editPassword" placeholder="********">
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('editUserModal').classList.remove('open')">إلغاء</button>
+      <button class="btn btn-primary" onclick="updateUser()" id="updateUserBtn">حفظ التغييرات</button>
     </div>
   </div>
 </div>
@@ -308,12 +499,17 @@
 <script src="assets/js/utils.js"></script>
 <script>
   let users = [];
+  let filteredUsers = [];
 
   async function loadUsers() {
+    document.getElementById('skeletonGrid').style.display = 'grid';
+    document.getElementById('usersGrid').style.display = 'none';
+    
     try {
       const result = await UsersAPI.getAll();
       if (result.success) {
         users = result.users || [];
+        filteredUsers = [...users];
         renderUsers();
       } else {
         showToast(result.error || 'فشل تحميل المستخدمين', 'error');
@@ -321,86 +517,120 @@
     } catch (error) {
       console.error('Error loading users:', error);
       showToast('خطأ في تحميل المستخدمين', 'error');
+    } finally {
+      document.getElementById('skeletonGrid').style.display = 'none';
+      document.getElementById('usersGrid').style.display = 'grid';
     }
+  }
+
+  function filterUsers() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const roleFilter = document.getElementById('roleFilter').value;
+    const statusFilter = document.getElementById('statusFilter').value;
+    
+    filteredUsers = users.filter(user => {
+      const matchesSearch = user.username.toLowerCase().includes(searchTerm) ||
+                           (user.email && user.email.toLowerCase().includes(searchTerm));
+      const matchesRole = roleFilter === 'all' || user.role === roleFilter;
+      const matchesStatus = statusFilter === 'all' || 
+                           (statusFilter === 'active' && user.is_active) ||
+                           (statusFilter === 'inactive' && !user.is_active);
+      
+      return matchesSearch && matchesRole && matchesStatus;
+    });
+    
+    renderUsers();
   }
 
   function renderUsers() {
     const grid = document.getElementById('usersGrid');
-    document.getElementById('usersCount').textContent = `${users.length} مستخدم`;
+    document.getElementById('usersCount').textContent = `${filteredUsers.length} مستخدم`;
     
-    if (users.length === 0) {
+    if (filteredUsers.length === 0) {
       grid.innerHTML = `
         <div class="empty-state">
           <div class="empty-state-icon">👤</div>
-          <div>لا يوجد مستخدمين</div>
+          <div class="empty-state-title">لا يوجد مستخدمين</div>
+          <div class="empty-state-desc">جرب تغيير معايير البحث</div>
         </div>
       `;
       return;
     }
 
-    grid.innerHTML = users.map(user => `
-      <div class="user-card-item">
+    grid.innerHTML = filteredUsers.map((user, index) => `
+      <div class="user-card-item" style="animation-delay: ${index * 0.05}s">
         <div class="user-avatar-lg ${user.role}">
           ${user.username.charAt(0).toUpperCase()}
         </div>
         <div class="user-info-lg">
           <div class="user-name-lg">
             ${escapeHtml(user.username)}
-            ${user.role === 'superadmin' ? '<span class="superadmin-badge">👑 SUPER ADMIN</span>' : ''}
             <span class="role-badge role-${user.role}">${user.role.toUpperCase()}</span>
+            <span class="status-badge ${user.is_active ? 'status-active' : 'status-inactive'}">
+              ${user.is_active ? '🟢 نشط' : '🔴 معطل'}
+            </span>
           </div>
           <div class="user-meta-lg">
-            📧 ${user.email || 'لا يوجد بريد'} • 
-            📁 ${user.project_count || 0} مشاريع • 
-            🕒 ${user.last_login_formatted || 'لم يسبق له الدخول'}
+            <span class="user-meta-item">📧 ${user.email || 'لا يوجد بريد'}</span>
+            <span class="user-meta-item">📁 ${user.project_count || 0} مشاريع</span>
+            <span class="user-meta-item">🕒 ${user.last_login_formatted || 'لم يسبق له الدخول'}</span>
           </div>
         </div>
         <div class="user-actions">
           ${user.role !== 'superadmin' ? `
-            <button class="btn btn-ghost" style="font-size:11px;padding:6px 12px" 
-                    onclick="toggleUserStatus(${user.id}, ${user.is_active})">
+            <button class="btn btn-ghost" onclick="showEditUserModal(${user.id})">
+              ✏️ تعديل
+            </button>
+            <button class="btn btn-ghost" onclick="toggleUserStatus(${user.id}, ${user.is_active})">
               ${user.is_active ? '🔴 تعطيل' : '🟢 تفعيل'}
             </button>
-            <button class="btn btn-danger" style="font-size:11px;padding:6px 12px" 
-                    onclick="deleteUser(${user.id}, '${user.username}')">
+            <button class="btn btn-danger" onclick="deleteUser(${user.id}, '${user.username}')">
               🗑️ حذف
             </button>
-          ` : '<span style="color:var(--muted);font-size:12px">محمي</span>'}
+          ` : '<span style="color:var(--muted);font-size:13px">محمي</span>'}
         </div>
       </div>
     `).join('');
   }
 
   async function toggleUserStatus(userId, currentStatus) {
-    if (!confirm(`هل أنت متأكد من ${currentStatus ? 'تعطيل' : 'تفعيل'} هذا المستخدم؟`)) return;
-    
-    try {
-      const result = await UsersAPI.toggleStatus(userId);
-      if (result.success) {
-        showToast(result.message, 'success');
-        loadUsers();
-      } else {
-        showToast(result.error || 'فشل تحديث الحالة', 'error');
+    showConfirm(
+      currentStatus ? 'تعطيل المستخدم' : 'تفعيل المستخدم',
+      `هل أنت متأكد من ${currentStatus ? 'تعطيل' : 'تفعيل'} هذا المستخدم؟`,
+      async () => {
+        try {
+          const result = await UsersAPI.toggleStatus(userId);
+          if (result.success) {
+            showToast(result.message, 'success');
+            loadUsers();
+          } else {
+            showToast(result.error || 'فشل تحديث الحالة', 'error');
+          }
+        } catch (error) {
+          showToast('خطأ في تحديث الحالة', 'error');
+        }
       }
-    } catch (error) {
-      showToast('خطأ في تحديث الحالة', 'error');
-    }
+    );
   }
 
   async function deleteUser(userId, username) {
-    if (!confirm(`هل أنت متأكد من حذف المستخدم "${username}"؟\nسيتم حذف جميع مشاريعه أيضاً!`)) return;
-    
-    try {
-      const result = await UsersAPI.delete(userId);
-      if (result.success) {
-        showToast(result.message, 'success');
-        loadUsers();
-      } else {
-        showToast(result.error || 'فشل حذف المستخدم', 'error');
+    showConfirm(
+      'حذف المستخدم',
+      `هل أنت متأكد من حذف المستخدم "${username}"؟\nسيتم حذف جميع مشاريعه أيضاً!`,
+      async () => {
+        try {
+          const result = await UsersAPI.delete(userId);
+          if (result.success) {
+            showToast(result.message, 'success');
+            loadUsers();
+          } else {
+            showToast(result.error || 'فشل حذف المستخدم', 'error');
+          }
+        } catch (error) {
+          showToast('خطأ في حذف المستخدم', 'error');
+        }
       }
-    } catch (error) {
-      showToast('خطأ في حذف المستخدم', 'error');
-    }
+    );
   }
 
   function showAddUserModal() {
@@ -412,11 +642,15 @@
     const email = document.getElementById('newEmail').value.trim();
     const password = document.getElementById('newPassword').value;
     const role = document.getElementById('newRole').value;
+    const btn = document.getElementById('addUserBtn');
     
     if (!username || !password) {
       showToast('يرجى إدخال اسم المستخدم وكلمة المرور', 'error');
       return;
     }
+    
+    btn.classList.add('btn-loading');
+    btn.disabled = true;
     
     try {
       const result = await UsersAPI.create({ username, email, password, role });
@@ -432,11 +666,63 @@
       }
     } catch (error) {
       showToast('خطأ في إضافة المستخدم', 'error');
+    } finally {
+      btn.classList.remove('btn-loading');
+      btn.disabled = false;
+    }
+  }
+
+  function showEditUserModal(userId) {
+    const user = users.find(u => u.id === userId);
+    if (!user) return;
+    
+    document.getElementById('editUserId').value = userId;
+    document.getElementById('editUsername').value = user.username;
+    document.getElementById('editEmail').value = user.email || '';
+    document.getElementById('editRole').value = user.role;
+    document.getElementById('editPassword').value = '';
+    
+    document.getElementById('editUserModal').classList.add('open');
+  }
+
+  async function updateUser() {
+    const userId = document.getElementById('editUserId').value;
+    const email = document.getElementById('editEmail').value.trim();
+    const role = document.getElementById('editRole').value;
+    const password = document.getElementById('editPassword').value;
+    const btn = document.getElementById('updateUserBtn');
+    
+    btn.classList.add('btn-loading');
+    btn.disabled = true;
+    
+    try {
+      const result = await UsersAPI.update(userId, { email, role });
+      
+      if (result.success) {
+        // Update password if provided
+        if (password) {
+          await UsersAPI.changePassword(userId, password);
+        }
+        
+        showToast('تم تحديث المستخدم بنجاح', 'success');
+        document.getElementById('editUserModal').classList.remove('open');
+        loadUsers();
+      } else {
+        showToast(result.error || 'فشل تحديث المستخدم', 'error');
+      }
+    } catch (error) {
+      showToast('خطأ في تحديث المستخدم', 'error');
+    } finally {
+      btn.classList.remove('btn-loading');
+      btn.disabled = false;
     }
   }
 
   function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('open');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('open');
   }
 
   function logout() {

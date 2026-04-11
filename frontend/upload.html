@@ -2,20 +2,21 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NexHost V4 — رفع مشروع</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NexHost V5 — رفع مشروع</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/shared.css">
 <style>
   .upload-container {
-    max-width: 600px;
+    max-width: 700px;
     margin: 0 auto;
   }
 
-  .upload-zone-large {
+  /* Drop Zone */
+  .drop-zone {
     background: var(--surface);
-    border: 2px dashed var(--border);
-    border-radius: 20px;
+    border: 3px dashed var(--border);
+    border-radius: 24px;
     padding: 60px 40px;
     text-align: center;
     cursor: pointer;
@@ -24,158 +25,320 @@
     overflow: hidden;
   }
 
-  .upload-zone-large:hover {
-    border-color: var(--accent);
-    background: rgba(0,216,255,0.03);
+  .drop-zone::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,216,255,0.05), rgba(124,58,237,0.05));
+    opacity: 0;
+    transition: opacity 0.3s;
   }
 
-  .upload-zone-large.dragover {
+  .drop-zone:hover::before {
+    opacity: 1;
+  }
+
+  .drop-zone:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+  }
+
+  .drop-zone.dragover {
     border-color: var(--accent);
     background: rgba(0,216,255,0.08);
     transform: scale(1.02);
   }
 
-  .upload-icon-lg {
-    font-size: 64px;
+  .drop-zone.dragover::before {
+    opacity: 1;
+  }
+
+  .drop-zone-icon {
+    font-size: 72px;
     margin-bottom: 20px;
     animation: bounce 2s infinite;
+    position: relative;
+    z-index: 1;
   }
 
   @keyframes bounce {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    50% { transform: translateY(-12px); }
   }
 
-  .upload-title-lg {
-    font-size: 20px;
+  .drop-zone-title {
+    font-size: 22px;
     font-weight: 700;
     color: #fff;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
   }
 
-  .upload-sub-lg {
-    font-size: 14px;
+  .drop-zone-sub {
+    font-size: 15px;
     color: var(--muted);
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 1;
   }
 
-  .upload-tags {
+  .drop-zone-tags {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     justify-content: center;
     flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
   }
 
-  .upload-tag-lg {
-    padding: 6px 14px;
+  .drop-zone-tag {
+    padding: 8px 16px;
     background: rgba(0,216,255,0.08);
     border: 1px solid rgba(0,216,255,0.15);
-    border-radius: 20px;
+    border-radius: 8px;
     font-size: 12px;
     font-family: 'IBM Plex Mono', monospace;
     color: var(--accent);
+    font-weight: 600;
   }
 
-  .project-form {
+  /* File Preview */
+  .file-preview {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 24px;
-    margin-top: 20px;
-  }
-
-  .form-section-title {
-    font-size: 14px;
-    font-weight: 700;
-    color: #fff;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .file-preview {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px;
+    border-radius: 16px;
+    padding: 20px;
     margin-bottom: 20px;
+    display: none;
+  }
+
+  .file-preview.show {
+    display: block;
+    animation: fadeInUp 0.4s ease;
+  }
+
+  .file-preview-header {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
+    margin-bottom: 16px;
   }
 
   .file-icon {
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     background: rgba(0,216,255,0.1);
-    border-radius: 10px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
+    font-size: 28px;
+    flex-shrink: 0;
   }
 
   .file-info {
     flex: 1;
+    min-width: 0;
   }
 
   .file-name {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
     color: #fff;
     word-break: break-all;
+    margin-bottom: 4px;
   }
 
-  .file-size {
-    font-size: 12px;
+  .file-meta {
+    font-size: 13px;
     color: var(--muted);
     font-family: 'IBM Plex Mono', monospace;
   }
 
   .file-remove {
-    background: none;
-    border: none;
+    background: rgba(255,68,102,0.1);
+    border: 1px solid rgba(255,68,102,0.2);
     color: var(--red);
     cursor: pointer;
     font-size: 18px;
-    padding: 8px;
+    padding: 10px;
+    border-radius: 10px;
+    transition: all var(--transition-fast);
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .file-remove:hover {
+    background: rgba(255,68,102,0.2);
+    transform: scale(1.05);
+  }
+
+  /* Progress Bar */
+  .progress-container {
+    background: var(--surface2);
+    border-radius: 10px;
+    overflow: hidden;
+    height: 10px;
+    margin-bottom: 10px;
   }
 
   .progress-bar {
-    height: 4px;
-    background: var(--surface2);
-    border-radius: 2px;
-    overflow: hidden;
-    margin-top: 12px;
-  }
-
-  .progress-fill {
     height: 100%;
     background: linear-gradient(90deg, var(--accent), var(--accent2));
-    border-radius: 2px;
+    border-radius: 10px;
     transition: width 0.3s ease;
+    position: relative;
+    overflow: hidden;
     width: 0%;
   }
 
-  .upload-status {
+  .progress-bar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .progress-text {
     text-align: center;
-    padding: 20px;
+    font-size: 13px;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* Project Form */
+  .project-form {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    display: none;
+  }
+
+  .project-form.show {
+    display: block;
+    animation: fadeInUp 0.4s ease;
+  }
+
+  .form-section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* Python Version Selector */
+  .python-version-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .version-btn {
+    padding: 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--muted);
+    font-family: 'Cairo', sans-serif;
     font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .version-btn:hover {
+    border-color: var(--accent);
+    color: var(--text);
+  }
+
+  .version-btn.active {
+    border-color: var(--accent);
+    background: rgba(0,216,255,0.08);
+    color: var(--accent);
+  }
+
+  .version-btn .version-icon {
+    font-size: 24px;
+  }
+
+  /* Upload Status */
+  .upload-status {
+    display: none;
+    text-align: center;
+    padding: 40px;
+  }
+
+  .upload-status.show {
+    display: block;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .upload-status-spinner {
+    width: 56px;
+    height: 56px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+  }
+
+  .upload-status-text {
+    font-size: 16px;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .upload-status-sub {
+    font-size: 13px;
     color: var(--muted);
   }
 
+  /* File Type Icons */
+  .file-type-py { background: rgba(0,216,255,0.15) !important; }
+  .file-type-zip { background: rgba(124,58,237,0.15) !important; }
+  .file-type-txt { background: rgba(0,255,136,0.15) !important; }
+  .file-type-env { background: rgba(255,215,0,0.15) !important; }
+
+  /* Responsive */
   @media (max-width: 768px) {
-    .upload-zone-large {
-      padding: 40px 20px;
+    .drop-zone {
+      padding: 40px 24px;
     }
 
-    .upload-icon-lg {
-      font-size: 48px;
+    .drop-zone-icon {
+      font-size: 56px;
     }
 
-    .upload-title-lg {
-      font-size: 16px;
+    .drop-zone-title {
+      font-size: 18px;
+    }
+
+    .python-version-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .file-preview-header {
+      flex-wrap: wrap;
     }
   }
 </style>
@@ -184,11 +347,14 @@
 
 <!-- Broadcast Banner -->
 <div class="broadcast-banner" id="broadcastBanner">
-    <span id="broadcastIcon">📢</span>
-    <span id="broadcastMsg"></span>
-    <button onclick="document.getElementById('broadcastBanner').classList.remove('show')" 
-            style="margin-right:auto;background:none;border:none;color:inherit;cursor:pointer">×</button>
+  <span id="broadcastIcon">📢</span>
+  <span id="broadcastMsg"></span>
+  <button onclick="document.getElementById('broadcastBanner').classList.remove('show')" 
+          style="margin-right:auto;background:none;border:none;color:inherit;cursor:pointer;font-size:20px">×</button>
 </div>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
 <div class="layout">
 
@@ -198,7 +364,7 @@
       <div class="logo-icon">⚡</div>
       <div>
         <div class="logo-text">NexHost</div>
-        <div class="logo-sub">PANEL v4.0</div>
+        <div class="logo-sub">PANEL v5.0</div>
       </div>
     </div>
 
@@ -239,7 +405,7 @@
   </aside>
 
   <!-- MOBILE MENU BUTTON -->
-  <button class="mobile-menu-btn" onclick="toggleSidebar()" style="position:fixed;top:10px;right:10px;z-index:101">☰</button>
+  <button class="mobile-menu-btn" onclick="toggleSidebar()" style="position:fixed;top:16px;right:16px;z-index:101">☰</button>
 
   <!-- MAIN -->
   <main class="main">
@@ -258,35 +424,55 @@
 
       <div class="upload-container">
 
-        <!-- Upload Zone -->
-        <div class="upload-zone-large" id="uploadZone" onclick="document.getElementById('fileInput').click()">
-          <div class="upload-icon-lg">📂</div>
-          <div class="upload-title-lg">اسحب ملفاتك هنا</div>
-          <div class="upload-sub-lg">أو اضغط للاختيار من جهازك</div>
-          <div class="upload-tags">
-            <span class="upload-tag-lg">.py</span>
-            <span class="upload-tag-lg">.zip</span>
-            <span class="upload-tag-lg">requirements.txt</span>
+        <!-- Drop Zone -->
+        <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+          <div class="drop-zone-icon">📂</div>
+          <div class="drop-zone-title">اسحب ملفاتك هنا</div>
+          <div class="drop-zone-sub">أو اضغط للاختيار من جهازك</div>
+          <div class="drop-zone-tags">
+            <span class="drop-zone-tag">.py</span>
+            <span class="drop-zone-tag">.zip</span>
+            <span class="drop-zone-tag">requirements.txt</span>
+            <span class="drop-zone-tag">.env</span>
           </div>
         </div>
 
-        <input type="file" id="fileInput" style="display:none" accept=".py,.zip,.txt" multiple>
+        <input type="file" id="fileInput" style="display:none" accept=".py,.zip,.txt,.env" multiple>
 
-        <!-- File Preview (hidden initially) -->
-        <div class="file-preview" id="filePreview" style="display:none">
-          <div class="file-icon">📄</div>
-          <div class="file-info">
-            <div class="file-name" id="fileName">-</div>
-            <div class="file-size" id="fileSize">-</div>
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
+        <!-- File Preview -->
+        <div class="file-preview" id="filePreview">
+          <div class="file-preview-header">
+            <div class="file-icon" id="fileIcon">📄</div>
+            <div class="file-info">
+              <div class="file-name" id="fileName">-</div>
+              <div class="file-meta" id="fileMeta">-</div>
             </div>
+            <button class="file-remove" onclick="removeFile()" title="إزالة الملف">✕</button>
           </div>
-          <button class="file-remove" onclick="removeFile()">✕</button>
+          <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+          <div class="progress-text" id="progressText">0%</div>
         </div>
 
         <!-- Project Form -->
-        <div class="project-form" id="projectForm" style="display:none">
+        <div class="project-form" id="projectForm">
+          <div class="form-section-title">🐍 إصدار Python</div>
+          <div class="python-version-grid">
+            <button class="version-btn" data-version="3.9" onclick="selectVersion(this)">
+              <span class="version-icon">🐍</span>
+              <span>Python 3.9</span>
+            </button>
+            <button class="version-btn active" data-version="3.10" onclick="selectVersion(this)">
+              <span class="version-icon">🐍</span>
+              <span>Python 3.10</span>
+            </button>
+            <button class="version-btn" data-version="3.11" onclick="selectVersion(this)">
+              <span class="version-icon">🐍</span>
+              <span>Python 3.11</span>
+            </button>
+          </div>
+
           <div class="form-section-title">📝 معلومات المشروع</div>
           
           <div class="field">
@@ -304,15 +490,16 @@
             <input type="text" class="input" id="mainFile" value="main.py" placeholder="main.py">
           </div>
 
-          <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="uploadProject()">
+          <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="uploadProject()" id="uploadBtn">
             🚀 رفع وإنشاء المشروع
           </button>
         </div>
 
         <!-- Upload Status -->
-        <div class="upload-status" id="uploadStatus" style="display:none">
-          <div class="spinner" style="margin:0 auto 12px"></div>
-          <div>جاري رفع الملف...</div>
+        <div class="upload-status" id="uploadStatus">
+          <div class="upload-status-spinner"></div>
+          <div class="upload-status-text">جاري رفع الملف...</div>
+          <div class="upload-status-sub">يرجى الانتظار</div>
         </div>
 
       </div>
@@ -345,23 +532,33 @@
 <script>
   let selectedFile = null;
   let createdProjectId = null;
+  let selectedPythonVersion = '3.10';
 
   // Drag and drop
-  const uploadZone = document.getElementById('uploadZone');
+  const dropZone = document.getElementById('dropZone');
 
-  uploadZone.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    uploadZone.classList.add('dragover');
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, preventDefaults, false);
   });
 
-  uploadZone.addEventListener('dragleave', () => {
-    uploadZone.classList.remove('dragover');
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropZone.addEventListener(eventName, () => {
+      dropZone.classList.add('dragover');
+    }, false);
   });
 
-  uploadZone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    uploadZone.classList.remove('dragover');
-    
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, () => {
+      dropZone.classList.remove('dragover');
+    }, false);
+  });
+
+  dropZone.addEventListener('drop', (e) => {
     const files = e.dataTransfer.files;
     if (files.length > 0) {
       handleFileSelect(files[0]);
@@ -375,11 +572,11 @@
   });
 
   function handleFileSelect(file) {
-    const allowedTypes = ['.py', '.zip', '.txt'];
+    const allowedTypes = ['.py', '.zip', '.txt', '.env'];
     const ext = '.' + file.name.split('.').pop().toLowerCase();
     
     if (!allowedTypes.includes(ext)) {
-      showToast('نوع الملف غير مدعوم. استخدم .py أو .zip أو .txt', 'error');
+      showToast('نوع الملف غير مدعوم. استخدم .py أو .zip أو .txt أو .env', 'error');
       return;
     }
     
@@ -387,26 +584,64 @@
     
     // Show preview
     document.getElementById('fileName').textContent = file.name;
-    document.getElementById('fileSize').textContent = FormatUtils.formatBytes(file.size);
-    document.getElementById('filePreview').style.display = 'flex';
-    document.getElementById('projectForm').style.display = 'block';
+    document.getElementById('fileMeta').textContent = `${FormatUtils.formatBytes(file.size)} • ${ext.toUpperCase()}`;
+    
+    // Set file icon based on type
+    const fileIcon = document.getElementById('fileIcon');
+    fileIcon.className = 'file-icon';
+    if (ext === '.py') {
+      fileIcon.textContent = '🐍';
+      fileIcon.classList.add('file-type-py');
+    } else if (ext === '.zip') {
+      fileIcon.textContent = '📦';
+      fileIcon.classList.add('file-type-zip');
+    } else if (ext === '.txt') {
+      fileIcon.textContent = '📄';
+      fileIcon.classList.add('file-type-txt');
+    } else if (ext === '.env') {
+      fileIcon.textContent = '⚙️';
+      fileIcon.classList.add('file-type-env');
+    }
+    
+    document.getElementById('filePreview').classList.add('show');
+    document.getElementById('projectForm').classList.add('show');
     
     // Auto-fill project name from file
     const nameWithoutExt = file.name.replace(/\.[^/.]+$/, '');
     document.getElementById('projectName').value = nameWithoutExt;
+    
+    // Auto-detect main file for Python files
+    if (ext === '.py') {
+      document.getElementById('mainFile').value = file.name;
+    }
+    
+    // Animate progress bar
+    setTimeout(() => {
+      document.getElementById('progressBar').style.width = '100%';
+      document.getElementById('progressText').textContent = 'جاهز للرفع';
+    }, 300);
   }
 
   function removeFile() {
     selectedFile = null;
-    document.getElementById('filePreview').style.display = 'none';
-    document.getElementById('projectForm').style.display = 'none';
+    document.getElementById('filePreview').classList.remove('show');
+    document.getElementById('projectForm').classList.remove('show');
     document.getElementById('fileInput').value = '';
+    document.getElementById('progressBar').style.width = '0%';
+    document.getElementById('progressText').textContent = '0%';
+  }
+
+  function selectVersion(btn) {
+    document.querySelectorAll('.version-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedPythonVersion = btn.dataset.version;
   }
 
   async function uploadProject() {
     const name = document.getElementById('projectName').value.trim();
     const desc = document.getElementById('projectDesc').value.trim();
     const mainFile = document.getElementById('mainFile').value.trim();
+    const btn = document.getElementById('uploadBtn');
     
     if (!name) {
       showToast('يرجى إدخال اسم المشروع', 'error');
@@ -424,8 +659,10 @@
     }
     
     // Show loading
-    document.getElementById('uploadStatus').style.display = 'block';
-    document.getElementById('projectForm').style.display = 'none';
+    btn.classList.add('btn-loading');
+    btn.disabled = true;
+    document.getElementById('uploadStatus').classList.add('show');
+    document.getElementById('projectForm').classList.remove('show');
     
     try {
       // Step 1: Create project
@@ -433,13 +670,16 @@
         name: name,
         description: desc,
         language: 'python',
-        main_file: mainFile
+        main_file: mainFile,
+        python_version: selectedPythonVersion
       });
       
       if (!createResult.success) {
         showToast(createResult.error || 'فشل إنشاء المشروع', 'error');
-        document.getElementById('uploadStatus').style.display = 'none';
-        document.getElementById('projectForm').style.display = 'block';
+        document.getElementById('uploadStatus').classList.remove('show');
+        document.getElementById('projectForm').classList.add('show');
+        btn.classList.remove('btn-loading');
+        btn.disabled = false;
         return;
       }
       
@@ -454,35 +694,32 @@
       if (uploadResult.success) {
         showToast('تم رفع المشروع بنجاح!', 'success');
         
-        // Simulate progress
-        let progress = 0;
-        const interval = setInterval(() => {
-          progress += 10;
-          document.getElementById('progressFill').style.width = progress + '%';
-          
-          if (progress >= 100) {
-            clearInterval(interval);
-            setTimeout(() => {
-              window.location.href = `project-details.html?id=${createdProjectId}`;
-            }, 500);
-          }
-        }, 100);
+        setTimeout(() => {
+          window.location.href = `project-details.html?id=${createdProjectId}`;
+        }, 1000);
       } else {
         showToast(uploadResult.error || 'فشل رفع الملف', 'error');
-        document.getElementById('uploadStatus').style.display = 'none';
-        document.getElementById('projectForm').style.display = 'block';
+        document.getElementById('uploadStatus').classList.remove('show');
+        document.getElementById('projectForm').classList.add('show');
+        btn.classList.remove('btn-loading');
+        btn.disabled = false;
       }
       
     } catch (error) {
       console.error('Upload error:', error);
       showToast('خطأ في رفع المشروع', 'error');
-      document.getElementById('uploadStatus').style.display = 'none';
-      document.getElementById('projectForm').style.display = 'block';
+      document.getElementById('uploadStatus').classList.remove('show');
+      document.getElementById('projectForm').classList.add('show');
+      btn.classList.remove('btn-loading');
+      btn.disabled = false;
     }
   }
 
   function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('open');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('open');
   }
 
   function logout() {
