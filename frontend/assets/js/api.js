@@ -111,7 +111,12 @@ const API = {
 // Authentication API
 const AuthAPI = {
   async login(username, password) {
-    return API.post('/auth/login', { username, password });
+    const result = await API.post('/auth/login', { username, password });
+    if (result.success && result.token) {
+      TokenManager.setToken(result.token);
+      if (result.user) TokenManager.setUser(result.user);
+    }
+    return result;
   },
   
   async logout() {
