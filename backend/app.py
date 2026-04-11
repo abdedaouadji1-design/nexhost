@@ -38,10 +38,8 @@ os.makedirs(LOGS_DIR, exist_ok=True)
 def create_app():
     """Create and configure Flask application"""
 
-    # Flask app with static_folder pointing to frontend
-    app = Flask(__name__,
-                static_folder=FRONTEND_DIR,
-                static_url_path='')
+    # Flask app
+    app = Flask(__name__)
 
     # CORS
     CORS(app, resources={
@@ -797,6 +795,18 @@ def create_app():
 
     @app.route('/')
     def index():
+        """Serve login page"""
+        return send_from_directory(FRONTEND_DIR, 'login.html')
+
+    @app.route('/<path:filename>')
+    def serve_static(filename):
+        """Serve all frontend static files"""
+        filepath = os.path.join(FRONTEND_DIR, filename)
+        if os.path.isfile(filepath):
+            directory = os.path.dirname(filepath)
+            name = os.path.basename(filepath)
+            return send_from_directory(directory, name)
+        # fallback to login
         return send_from_directory(FRONTEND_DIR, 'login.html')
 
     # =============================================================================
@@ -805,6 +815,9 @@ def create_app():
 
     @app.errorhandler(404)
     def not_found(error):
+        # API 404 returns JSON, page 404 returns login
+        if request.path.startswith('/api/'):
+            return jsonify({'success': False, 'error': 'Not found'}), 404
         return send_from_directory(FRONTEND_DIR, 'login.html')
 
     @app.errorhandler(500)
