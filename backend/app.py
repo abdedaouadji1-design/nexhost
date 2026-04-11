@@ -18,7 +18,7 @@ from auth import AuthManager
 from projects import ProjectManager
 from runner import ProcessRunner
 from logs import LogManager
-from backend.users import UserManager
+from users import UserManager
 from system import SystemMonitor
 from settings import SettingsManager
 from admin import AdminManager
