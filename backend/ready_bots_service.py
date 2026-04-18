@@ -235,6 +235,7 @@ class UserBotService:
             config_lines.append(f'{key.upper()} = "{value}"')
         
         config_str = "\n".join(config_lines)
+        debug_label = "Add debug logging" if debug_mode else "Keep it production-ready"
         
         prompt = f"""Insert these configurations into the bot code:
 
@@ -248,7 +249,7 @@ Requirements:
 1. Insert the configuration at the TOP of the file after imports
 2. Replace any placeholder tokens with the actual values
 3. Add error handling
-4. {'Add debug logging' if debug_mode else 'Keep it production-ready'}
+4. {debug_label}
 5. Return ONLY the complete modified code
 
 MODIFIED CODE:"""
@@ -461,7 +462,8 @@ class AIBotGenerator:
     ) -> Dict[str, str]:
         """Generate complete bot using AI"""
         
-        features_str = "\n".join([f"- {f}" for f in (features or [])])
+        features_list = features or []
+        features_str = "\n".join(["- " + feat for feat in features_list])
         
         prompt = f"""Create a complete, production-ready {bot_type} bot in Python.
 
