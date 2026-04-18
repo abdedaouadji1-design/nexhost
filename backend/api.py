@@ -44,7 +44,7 @@ class UserCreate(BaseModel):
     username: str = Field(..., min_length=3, max_length=50)
     email: str = Field(..., pattern=r"^[\w\.-]+@[\w\.-]+\.[a-zA-Z]{2,}$")
     password: str = Field(..., min_length=8)
-    role: Optional[UserRole] = UserRole.USER
+    role: Optional[str] = "user"
 
 
 class UserResponse(BaseModel):
@@ -148,7 +148,7 @@ async def login(
             "id": user.id,
             "username": user.username,
             "email": user.email,
-            "role": user.role.value
+            "role": user.role
         }
     }
 
@@ -159,7 +159,7 @@ async def refresh_token(current_user: User = Depends(get_current_user)):
     new_token = create_access_token({
         "sub": current_user.username,
         "user_id": current_user.id,
-        "role": current_user.role.value
+        "role": current_user.role
     })
     
     return {"access_token": new_token, "token_type": "bearer"}
@@ -172,7 +172,7 @@ async def get_me(current_user: User = Depends(get_current_user)):
         "id": current_user.id,
         "username": current_user.username,
         "email": current_user.email,
-        "role": current_user.role.value,
+        "role": current_user.role,
         "is_active": current_user.is_active,
         "max_python_files": current_user.max_python_files,
         "max_php_files": current_user.max_php_files,
@@ -203,7 +203,7 @@ async def create_user(
         "id": user.id,
         "username": user.username,
         "email": user.email,
-        "role": user.role.value,
+        "role": user.role,
         "is_active": user.is_active,
         "max_python_files": user.max_python_files,
         "max_php_files": user.max_php_files,
@@ -233,7 +233,7 @@ async def list_users(
             "id": u.id,
             "username": u.username,
             "email": u.email,
-            "role": u.role.value,
+            "role": u.role,
             "is_active": u.is_active,
             "max_python_files": u.max_python_files,
             "max_php_files": u.max_php_files,
@@ -621,4 +621,4 @@ async def health_check():
         "status": "healthy",
         "version": "6.0.0",
         "timestamp": datetime.utcnow().isoformat()
-    }
+        }
