@@ -550,7 +550,7 @@ Return your response in this exact format:
 {code}
 ```
 
-{f"ERROR MESSAGE:\n{error_message}\n" if error_message else ""}
+{("ERROR MESSAGE:\n" + error_message + "\n") if error_message else ""}
 
 Please:
 1. Identify the issues
